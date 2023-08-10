@@ -1,6 +1,6 @@
 # Easy Midi File Parser Cpp
 
-This parser works on .midi files, following the Standard MIDI Files 1.0 specification (SMF 10).
+This parser works on .midi files, following the Standard MIDI Files 1.0 specification (SMF 1.0).
 
 ## Motivation
 
@@ -30,6 +30,7 @@ It also means you should be able to link it to other versions of C++ without any
 
 ## Support 
 
+- [X] [Standard MIDI Files 1.0 specification (SMF)](https://www.midi.org/specifications/file-format-specifications/standard-midi-files)
 - [X] Format 0 Supported
 - [X] Format 1 Supported
 - [ ] Format 2 Supported (uncommon)
