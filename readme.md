@@ -39,6 +39,7 @@ It also means you should be able to link it to other versions of C++ without any
 - [ ] Mixed Endian Support (weird machines)
 - [x] Loading
 - [ ] Conversion to an easier format
+- [X] Easy Debug
 
 ## Other notes
 
