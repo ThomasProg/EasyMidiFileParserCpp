@@ -20,4 +20,4 @@ target_include_directories(${LibName} PUBLIC
     "${ModulesDirectory}/BaseMIDIHelpers/Public"
 )
 
-
+add_subdirectory(Tests)
