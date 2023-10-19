@@ -74,8 +74,17 @@ const MIDIParser::FileHeader MIDIParser::LoadFileHeaderFromBuffer(BufferReader& 
     //header.size = *(uint32_t*)buffer.Consume(sizeof(uint32_t));
     BigToNativeEndian(header.size);
 
-    assert(!memcmp(header.name, "MThd", 4)); 
-    assert(header.size == 6);
+    if (memcmp(header.name, "MThd", 4))
+    {
+        throw std::runtime_error("Header name is not MThd");
+    }
+    // assert(!memcmp(header.name, "MThd", 4)); 
+
+    if (header.size != 6)
+    {
+        throw std::runtime_error("Header name size is not 6"); 
+    }
+    // assert(header.size == 6);
 
     return header;
 }
@@ -125,7 +134,11 @@ MIDIParser::FileHeaderData MIDIParser::LoadFileHeaderDataFromBuffer(BufferReader
     // BigToNativeEndian(data->division);
 
     // Files with format 0 MUST have only 1 track
-    assert(fileHeaderData.format != 0 || fileHeaderData.nbTracks == 1);
+    if (fileHeaderData.format == 0 && fileHeaderData.nbTracks != 1)
+    {
+        throw std::runtime_error("MIDI file with format 0 should have only 1 track (instead of " + std::to_string(fileHeaderData.nbTracks) + ")");
+    }
+    // assert(fileHeaderData.format != 0 || fileHeaderData.nbTracks == 1);
 
     return fileHeaderData;
 }
@@ -238,19 +251,20 @@ MIDIParser::MetaEvent MIDIParser::LoadMetaEventFromBuffer(BufferReader& buffer)
 
     metaEvent.length = ReadVarLen(buffer);
 
-    assert(metaEvent.length >= 0);
+    // length is unsigned, so it will always be greater than 0
+    // assert(metaEvent.length >= 0);
 
     metaEvent.bytes = (uint8_t*) buffer.Consume(sizeof(uint8_t) * metaEvent.length);
 
     return metaEvent;
 }
 
-int GetMIDIEventDataLength(MIDIParser::ENoteEvent channelEvent)
+int GetMIDIEventDataLength(ENoteEvent channelEvent)
 {
     switch (channelEvent) {
-        case MIDIParser::ENoteEvent::PGM_CHANGE: 
-        case MIDIParser::ENoteEvent::CHANNEL_AFTER_TOUCH: 
-        case MIDIParser::ENoteEvent::CONTROL_CHANGE: // min is 1
+        case ENoteEvent::PGM_CHANGE: 
+        case ENoteEvent::CHANNEL_AFTER_TOUCH: 
+        case ENoteEvent::CONTROL_CHANGE: // min is 1
             return 1;
 
         default: 
@@ -341,7 +355,11 @@ void MIDIParser::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtim
             buffer.GoBack(sizeof(MessageStatus));
 
             // Use previous status byte
-            assert(runtimeStatus.IsValid());
+            if (!runtimeStatus.IsValid())
+            {
+                throw MIDIParserException(*this, "Invalid runtime status", (const char*) buffer.Data());
+            }
+            // assert(runtimeStatus.IsValid());
             MIDIParser::ChannelEvent channelEvent = LoadChannelEventDataFromBuffer(runtimeStatus, buffer);
             try 
             {
@@ -390,7 +408,12 @@ void MIDIParser::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtim
     }
 
     const uint8_t* temp = startBytes + trackChunk.length;
-    assert(buffer.Data() - temp == 0);
+
+    if (buffer.Data() - temp != 0)
+    {
+        throw MIDIParserException(*this, "not equal 0", (const char*) buffer.Data());
+    }
+    // assert(buffer.Data() - temp == 0);
 
     // bytes = startBytes + trackChunk->length;
 

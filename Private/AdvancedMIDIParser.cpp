@@ -53,7 +53,9 @@ void AdvancedMIDIParser::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
     {
         case EMidiMeta::SET_TEMPO:
             assert(metaEvent.length == 3);
-            tempo = (metaEvent.bytes[0] << 16) + (metaEvent.bytes[1] << 8) + metaEvent.bytes[2];
+            if (500000 != tempo)
+                tempo = (metaEvent.bytes[0] << 16) + (metaEvent.bytes[1] << 8) + metaEvent.bytes[2];
+            std::cout << "tempo : " << tempo << " / index : " << currentTrackIndex << std::endl; 
             break;
 
         case EMidiMeta::TIME_SIGNATURE:
@@ -83,6 +85,9 @@ void AdvancedMIDIParser::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
 
         case EMidiMeta::END_OF_TRACK:
             break;
+
+        // case EMidiMeta::SEQ_SPECIFIC:
+        //     break;
 
         case EMidiMeta::TEXT:
             OnText((const char*)metaEvent.bytes, metaEvent.length);
@@ -114,12 +119,12 @@ void AdvancedMIDIParser::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
 
 
         default:
-            throw std::runtime_error(std::string("OnMetaEventLoaded/") + std::to_string((int)metaEvent.type) );
+            // throw std::runtime_error(std::string("OnMetaEventLoaded/") + std::to_string((int)metaEvent.type) );
             break;    
     }
 }
 
-void assertControlChange(MIDIParser::EControlChange cc, int param)
+void assertControlChange(EControlChange cc, int param)
 {
     assert(param >= 0);
 
@@ -132,23 +137,57 @@ void assertControlChange(MIDIParser::EControlChange cc, int param)
 
     if (ccValue <= 119)
     {
-        assert(param <= 127);
+        if (param > 127)
+            throw std::runtime_error("invalid param : ccValue <= 119 && param > 127");
+        // assert(param <= 127);
+    }
+    // From 120 to 127 : channel modes 
+    else if (ccValue == 120) 
+    {
+        // Mute all sounds
+    }
+    else if (ccValue == 121) 
+    {
+        // Reset All Controllers
+    }
+    else if (ccValue == 121) 
+    {
+        // Local on/off Switch
     }
     else if (ccValue == 122)
     {
-        assert(param == 0 || param == 127);
+        if (param != 0 && param != 127)
+            throw std::runtime_error("invalid param : ccValue == 122 && (param != 0 && param != 127)");
+        // assert(param == 0 || param == 127);
+    }
+    else if (ccValue == 123)
+    {
+        // All Notes Off
+    }
+    else if (ccValue == 124)
+    {
+        // Omni Mode Off
+    }
+    else if (ccValue == 125)
+    {
+        //Omni Mode On
     }
     else if (ccValue == 126)
     {
-        assert(false); // not currently done
+        // Mono Mode (Monophonic)
+    }
+    else if (ccValue == 127)
+    {
+        // Poly Mode (Polyphonic)
     }
     else
     {
         if (param != 0)
         {
-            std::cout << "ERROR : " << (int) ccValue << std::endl;
+            // std::cout << "ERROR : " << (int) ccValue << std::endl;
+            throw std::runtime_error("invalid param : ccValue is default, param != 0 : param == " + std::to_string(param) + " / ccValue == " + std::to_string(ccValue));
         }
-        assert(param == 0);
+        // assert(param == 0);
     }
 }
 
