@@ -14,7 +14,7 @@
 #define MIDIPARSEREXPORT __declspec(dllimport)
 #endif
 
-class MIDIParser
+class MIDIPARSEREXPORT MIDIParser
 {
 public:
     struct MIDIPARSEREXPORT Buffer
@@ -184,41 +184,41 @@ public:
     BufferReader* debugBufferPtr = nullptr;
 
 public:
-    MIDIPARSEREXPORT const char* GetDataStrFromByte(void* byte) const;
+    const char* GetDataStrFromByte(void* byte) const;
 
-    MIDIPARSEREXPORT virtual void OnLoadedFromFile(const char* filename) {}
-    MIDIPARSEREXPORT virtual void OnLoadedFromBytes() {}
+    virtual void OnLoadedFromFile(const char* filename) {}
+    virtual void OnLoadedFromBytes() {}
 
-    MIDIPARSEREXPORT virtual void OnFileHeaderLoaded(const FileHeader& fileHeader) {}
-    MIDIPARSEREXPORT virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) {}
+    virtual void OnFileHeaderLoaded(const FileHeader& fileHeader) {}
+    virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) {}
 
-    MIDIPARSEREXPORT virtual void OnTrackHeaderLoaded(TrackHeader& fileHeader) {}
-    MIDIPARSEREXPORT virtual void OnTrackLoaded() {}
+    virtual void OnTrackHeaderLoaded(TrackHeader& fileHeader) {}
+    virtual void OnTrackLoaded() {}
 
-    MIDIPARSEREXPORT virtual void OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent) {}
-    MIDIPARSEREXPORT virtual void OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent) {}
-    MIDIPARSEREXPORT virtual void OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& channelEvent, bool isOpti) {}
+    virtual void OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent) {}
+    virtual void OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent) {}
+    virtual void OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& channelEvent, bool isOpti) {}
 
 
-    MIDIPARSEREXPORT static void Reduce(size_t& size, size_t reduced);
+    static void Reduce(size_t& size, size_t reduced);
 
-    MIDIPARSEREXPORT static const FileHeader LoadFileHeaderFromBuffer(BufferReader& buffer);
-    MIDIPARSEREXPORT static FileHeaderData LoadFileHeaderDataFromBuffer(BufferReader& buffer);
+    static const FileHeader LoadFileHeaderFromBuffer(BufferReader& buffer);
+    static FileHeaderData LoadFileHeaderDataFromBuffer(BufferReader& buffer);
 
-    MIDIPARSEREXPORT void LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtimeStatus);
-    MIDIPARSEREXPORT static TrackHeader LoadTrackHeaderFromBuffer(BufferReader& buffer);
+    void LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtimeStatus);
+    static TrackHeader LoadTrackHeaderFromBuffer(BufferReader& buffer);
 
-    MIDIPARSEREXPORT static MIDIParser::MetaEvent LoadMetaEventFromBuffer(BufferReader& buffer);
-    MIDIPARSEREXPORT static MIDIParser::ChannelEvent LoadChannelEventDataFromBuffer(MessageStatus& midiEvent, BufferReader& buffer);
-    MIDIPARSEREXPORT static MIDIParser::SysexEvent LoadSysexEventFromBuffer(const MessageStatus& status, BufferReader& buffer);
+    static MIDIParser::MetaEvent LoadMetaEventFromBuffer(BufferReader& buffer);
+    static MIDIParser::ChannelEvent LoadChannelEventDataFromBuffer(MessageStatus& midiEvent, BufferReader& buffer);
+    static MIDIParser::SysexEvent LoadSysexEventFromBuffer(const MessageStatus& status, BufferReader& buffer);
 
-    MIDIPARSEREXPORT void LoadFromBuffer(BufferReader& buffer);
-    MIDIPARSEREXPORT void LoadFromBytes(const char* bytes, size_t size);
-    MIDIPARSEREXPORT void LoadFromFile(const char* filename);
+    void LoadFromBuffer(BufferReader& buffer);
+    void LoadFromBytes(const char* bytes, size_t size);
+    void LoadFromFile(const char* filename);
 
-    MIDIPARSEREXPORT static const char* ENoteEventToStr(const ENoteEvent& noteEvent);
-    MIDIPARSEREXPORT static const char* MidiMetaToStr(const EMidiMeta& midiMeta);
-    MIDIPARSEREXPORT static const char* SysEventToStr(const ESysEvent& sysEvent);
+    static const char* ENoteEventToStr(const ENoteEvent& noteEvent);
+    static const char* MidiMetaToStr(const EMidiMeta& midiMeta);
+    static const char* SysEventToStr(const ESysEvent& sysEvent);
 };
 
 #endif // _MIDI_PARSER_H_

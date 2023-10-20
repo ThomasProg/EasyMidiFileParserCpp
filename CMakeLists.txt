@@ -12,7 +12,6 @@ project(${LibName})
 # Create library
 add_library(${LibName} SHARED ${SOURCES})
 
-# target_compile_definitions(${LibName} PRIVATE MMG_EXPORT)
 target_compile_definitions(${LibName} PRIVATE MAKE_DLL)
 
 target_include_directories(${LibName} PUBLIC 
