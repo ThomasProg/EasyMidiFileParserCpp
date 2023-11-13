@@ -3,6 +3,7 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include "Buffers/BufferReader.h"
 
 void AdvancedMIDIParser::OnTrackLoaded()
 {
@@ -27,6 +28,13 @@ void AdvancedMIDIParser::OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData)
 
     ticksPerQuarterNote = fileHeaderData.delta.ticksPerQuarterNote;
     currentTrackIndex = 0;
+}
+
+void AdvancedMIDIParser::OnTrackHeaderLoaded(TrackHeader& fileHeader)
+{
+    
+    // std::cout << "type:" << fileHeader.type << std::endl; 
+
 }
 
 AdvancedMIDIParser::~AdvancedMIDIParser()
@@ -55,7 +63,7 @@ void AdvancedMIDIParser::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
             assert(metaEvent.length == 3);
             if (500000 != tempo)
                 tempo = (metaEvent.bytes[0] << 16) + (metaEvent.bytes[1] << 8) + metaEvent.bytes[2];
-            std::cout << "tempo : " << tempo << " / index : " << currentTrackIndex << std::endl; 
+            // std::cout << "tempo : " << tempo << " / index : " << currentTrackIndex << std::endl; 
             break;
 
         case EMidiMeta::TIME_SIGNATURE:

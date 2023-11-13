@@ -8,7 +8,7 @@ class MIDIPARSEREXPORT AdvancedMIDIParser : public MIDIParser
 {
 public:
     int16_t nbTracks = 0;
-    int16_t ticksPerQuarterNote;
+    int16_t ticksPerQuarterNote = 4; // is 4 the default ?
 
     // only 3 bytes
     // msPerQuarterNote;
@@ -21,8 +21,9 @@ public:
     ~AdvancedMIDIParser();
 
     // Begin - MIDIParser
-    virtual void OnTrackLoaded() override;
     virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) override;
+    virtual void OnTrackLoaded() override;
+    virtual void OnTrackHeaderLoaded(TrackHeader& fileHeader) override;
     virtual void OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent) override;
     virtual void OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent) override;
     virtual void OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& channelEvent, bool isOpti) override;
