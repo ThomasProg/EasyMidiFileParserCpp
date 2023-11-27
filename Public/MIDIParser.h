@@ -5,17 +5,15 @@
 #include <unordered_map>
 #include <string>
 #include "MIDIHelpers.h"
+#include "Macros.h"
 
 #include <stdexcept>
 
-#ifdef MAKE_DLL // CPP
-#define MIDIPARSEREXPORT __declspec(dllexport)
-#else
-#define MIDIPARSEREXPORT __declspec(dllimport)
-#endif
-
 class BufferReader;
 
+// If you want to parse midi from a file or a buffer, use this class.
+// 0 dynamic memory allocations.
+// Uses virtual functions as callbacks.
 class MIDIPARSEREXPORT MIDIParser
 {
 public:
@@ -75,5 +73,23 @@ public:
     static const char* MidiMetaToStr(const EMidiMeta& midiMeta);
     static const char* SysEventToStr(const ESysEvent& sysEvent);
 };
+
+extern "C"
+{
+    inline MIDIPARSEREXPORT MIDIParser* CreateMIDIParser()
+    {
+        return new MIDIParser();
+    }
+
+    inline MIDIPARSEREXPORT void ParseFromParser(MIDIParser* parser, const char* path)
+    {
+        parser->LoadFromFile(path);
+    }
+
+    inline MIDIPARSEREXPORT void DeleteMIDIParser(MIDIParser* parser)
+    {
+        delete parser;
+    }
+}
 
 #endif // _MIDI_PARSER_H_

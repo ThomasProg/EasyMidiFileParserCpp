@@ -2,8 +2,11 @@
 #define _ADVANCED_MIDI_PARSER_H_
 
 #include "MIDIParser.h"
-#include <vector>
 
+// Parser that keeps track of deltatime and other data.
+// 1 dynamic memory allocation (to allocate dt for tracks).
+// Uses virtual functions as callbacks.
+// Possess more specialized callback functions
 class MIDIPARSEREXPORT AdvancedMIDIParser : public MIDIParser
 {
 public:
@@ -17,8 +20,8 @@ public:
 
     uint32_t* timePerTrack = nullptr; // in ms
 
-
     ~AdvancedMIDIParser();
+    void AddTimeToTrack(int16_t trackIndex, uint32_t deltaTime);
 
     // Begin - MIDIParser
     virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) override;

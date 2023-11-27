@@ -230,7 +230,6 @@ ChannelEvent MIDIParser::LoadChannelEventDataFromBuffer(MessageStatus& midiEvent
     {
         dataLength = 2;
     }
-    else channelEvent.param1 = 0;
 
     if (dataLength > 1)
     {
