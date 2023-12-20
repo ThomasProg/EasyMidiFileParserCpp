@@ -67,6 +67,7 @@ void AdvancedMIDIParser::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
     {
     case EMidiMeta::SET_TEMPO:
         assert(metaEvent.length == 3);
+        // TODO : not changing tempo? fix
         if (500000 != tempo)
             tempo = (metaEvent.bytes[0] << 16) + (metaEvent.bytes[1] << 8) + metaEvent.bytes[2];
         // std::cout << "tempo : " << tempo << " / index : " << currentTrackIndex << std::endl; 
@@ -214,30 +215,31 @@ void AdvancedMIDIParser::OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& 
         case ENoteEvent::NOTE_ON:
             // if (!isOpti)
             //     byteToDataStr.emplace(debugBufferPtr->Data() - 3, "NoteOn");
-            byteToDataStr.emplace(debugBufferPtr->Data() - 2, "NoteOn:Key");
-            byteToDataStr.emplace(debugBufferPtr->Data() - 1, "NoteOn:Velocity");
+            parser.AddDebugLog(parser.debugBufferPtr->Data() - 2, "NoteOn:Key");
+            parser.AddDebugLog(parser.debugBufferPtr->Data() - 1, "NoteOn:Velocity");
             OnNoteOn(channelEvent.channel, channelEvent.param1, channelEvent.param2);
             break;
 
         case ENoteEvent::NOTE_OFF:
             // if (!isOpti)
             //     byteToDataStr.emplace(debugBufferPtr->Data() - 2, "NoteOff");
-            byteToDataStr.emplace(debugBufferPtr->Data() - 1, "NoteOff:Key");
+            parser.AddDebugLog(parser.debugBufferPtr->Data() - 1, "NoteOff:Key");
             OnNoteOff(channelEvent.channel, channelEvent.param1);
             break;
 
         case ENoteEvent::PGM_CHANGE:
             // if (!isOpti)
             //     byteToDataStr.emplace(debugBufferPtr->Data() - 2, "ProgramChange");
-            byteToDataStr.emplace(debugBufferPtr->Data() - 1, "ProgramChange:ID");
+            parser.AddDebugLog(parser.debugBufferPtr->Data() - 1, "ProgramChange:ID");
             OnProgramChange(channelEvent.channel, channelEvent.param1);
             break;
 
         case ENoteEvent::CONTROL_CHANGE:
             // if (!isOpti)
             //     byteToDataStr.emplace(debugBufferPtr->Data() - 3, "ControlChange");
-            byteToDataStr.emplace(debugBufferPtr->Data() - 2, "ControlChange:Setting");
-            byteToDataStr.emplace(debugBufferPtr->Data() - 1, "ControlChange:Value");
+
+            parser.AddDebugLog(parser.debugBufferPtr->Data() - 2, "ControlChange:Setting");
+            parser.AddDebugLog(parser.debugBufferPtr->Data() - 1, "ControlChange:Value");
             assertControlChange((EControlChange) channelEvent.param1, channelEvent.param2);
             OnControlChange(channelEvent.channel, (EControlChange) channelEvent.param1, channelEvent.param2);
             break;

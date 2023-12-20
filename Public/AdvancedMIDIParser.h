@@ -1,15 +1,17 @@
 #ifndef _ADVANCED_MIDI_PARSER_H_
 #define _ADVANCED_MIDI_PARSER_H_
 
-#include "MIDIParser.h"
+#include "MIDIParserBase.h"
 
 // Parser that keeps track of deltatime and other data.
 // 1 dynamic memory allocation (to allocate dt for tracks).
 // Uses virtual functions as callbacks.
 // Possess more specialized callback functions
-class MIDIPARSEREXPORT AdvancedMIDIParser : public MIDIParser
+class MIDIPARSEREXPORT  AdvancedMIDIParser : public MIDIParserBase::Observer
 {
 public:
+    MIDIParserBase parser;
+
     int16_t nbTracks = 0;
     int16_t ticksPerQuarterNote = 4; // is 4 the default ?
 
@@ -20,6 +22,10 @@ public:
 
     uint32_t* timePerTrack = nullptr; // in ms
 
+    AdvancedMIDIParser()
+    {
+        parser.observer = this;
+    }
     ~AdvancedMIDIParser();
     void AddTimeToTrack(int16_t trackIndex, uint32_t deltaTime);
 
@@ -43,7 +49,7 @@ public:
     // Begin - MetaEvents
     // sf : 0 = key of C, -1 = 1 flat, 1 = 1 sharp
     // mi : major or minor ?
-    virtual void OnKeySignature(uint8_t sf, uint8_t mi) {}
+    virtual void OnKeySignature(int8_t sf, uint8_t mi) {}
     virtual void OnText(const char* text, uint32_t length) {}
     virtual void OnCopyright(const char* copyright, uint32_t length) {}
     virtual void OnTrackName(const char* trackName, uint32_t length) {}
@@ -52,6 +58,11 @@ public:
     virtual void OnMarker(const char* markerName, uint32_t length) {}
     virtual void OnCuePoint(const char* cuePointName, uint32_t length) {}
     // End - MetaEvents
+
+    void AddDebugLog(const void* data, const std::string&& message)
+    {
+        parser.AddDebugLog(data, std::move(message));
+    }
 };
 
 

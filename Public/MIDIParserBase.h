@@ -1,5 +1,5 @@
-#ifndef _MIDI_PARSER_H_
-#define _MIDI_PARSER_H_
+#ifndef _MIDI_PARSER_BASE_H_
+#define _MIDI_PARSER_BASE_H_
 
 #include <cstdint>
 #include <unordered_map>
@@ -14,7 +14,7 @@ class BufferReader;
 // If you want to parse midi from a file or a buffer, use this class.
 // 0 dynamic memory allocations.
 // Uses virtual functions as callbacks.
-class MIDIPARSEREXPORT MIDIParser
+class MIDIPARSEREXPORT MIDIParserBase
 {
 public:
     // <MTrk event>
@@ -32,27 +32,36 @@ public:
         uint64_t metaEvent;
     };
 
+    class MIDIPARSEREXPORT Observer
+    {
+    public:
+        virtual void OnLoadedFromFile(const char* filename) {}
+        virtual void OnLoadedFromBytes() {}
+
+        virtual void OnFileHeaderLoaded(const FileHeader& fileHeader) {}
+        virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) {}
+
+        virtual void OnTrackHeaderLoaded(TrackHeader& fileHeader) {}
+        virtual void OnTrackLoaded() {}
+
+        virtual void OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent) {}
+        virtual void OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent) {}
+        virtual void OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& channelEvent, bool isOpti) {}
+    };
+
+    Observer* observer;
+
 public:
     std::unordered_map<const void*, std::string> byteToDataStr;
     BufferReader* debugBufferPtr = nullptr;
 
+    void AddDebugLog(const void* data, const std::string&& message)
+    {
+        byteToDataStr.emplace(data, message);
+    }
+
 public:
     const char* GetDataStrFromByte(void* byte) const;
-
-    virtual void OnLoadedFromFile(const char* filename) {}
-    virtual void OnLoadedFromBytes() {}
-
-    virtual void OnFileHeaderLoaded(const FileHeader& fileHeader) {}
-    virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) {}
-
-    virtual void OnTrackHeaderLoaded(TrackHeader& fileHeader) {}
-    virtual void OnTrackLoaded() {}
-
-    virtual void OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent) {}
-    virtual void OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent) {}
-    virtual void OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& channelEvent, bool isOpti) {}
-
-
     static void Reduce(size_t& size, size_t reduced);
 
     /*static*/ const FileHeader LoadFileHeaderFromBuffer(BufferReader& buffer);
@@ -76,17 +85,17 @@ public:
 
 extern "C"
 {
-    inline MIDIPARSEREXPORT MIDIParser* CreateMIDIParser()
+    inline MIDIPARSEREXPORT MIDIParserBase* CreateMIDIParser()
     {
-        return new MIDIParser();
+        return new MIDIParserBase();
     }
 
-    inline MIDIPARSEREXPORT void ParseFromParser(MIDIParser* parser, const char* path)
+    inline MIDIPARSEREXPORT void ParseFromParser(MIDIParserBase* parser, const char* path)
     {
         parser->LoadFromFile(path);
     }
 
-    inline MIDIPARSEREXPORT void DeleteMIDIParser(MIDIParser* parser)
+    inline MIDIPARSEREXPORT void DeleteMIDIParser(MIDIParserBase* parser)
     {
         delete parser;
     }

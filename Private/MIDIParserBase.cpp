@@ -1,4 +1,4 @@
-#include "MIDIParser.h"
+#include "MIDIParserBase.h"
 
 #include <fstream>
 #include <assert.h>
@@ -11,7 +11,7 @@
 #include "EndianHelpers.h"
 #include "Buffers/BufferReader.h"
 
-void MIDIParser::Reduce(size_t& size, size_t reduced)
+void MIDIParserBase::Reduce(size_t& size, size_t reduced)
 {
     if (size >= reduced)
     {
@@ -23,12 +23,12 @@ void MIDIParser::Reduce(size_t& size, size_t reduced)
     }
 }
 
-const char* MIDIParser::GetDataStrFromByte(void* byte) const
+const char* MIDIParserBase::GetDataStrFromByte(void* byte) const
 {
     return byteToDataStr.find(byte)->second.c_str();
 }
 
-const FileHeader MIDIParser::LoadFileHeaderFromBuffer(BufferReader& buffer)
+const FileHeader MIDIParserBase::LoadFileHeaderFromBuffer(BufferReader& buffer)
 {
     FileHeader header = * (FileHeader*) buffer.Consume(sizeof(char) * 4 + sizeof(uint32_t));
     //header.name = *(const char*)buffer.Consume(sizeof(char) * 4);
@@ -51,7 +51,7 @@ const FileHeader MIDIParser::LoadFileHeaderFromBuffer(BufferReader& buffer)
     return header;
 }
 
-FileHeaderData MIDIParser::LoadFileHeaderDataFromBuffer(BufferReader& buffer)
+FileHeaderData MIDIParserBase::LoadFileHeaderDataFromBuffer(BufferReader& buffer)
 {
     FileHeaderData fileHeaderData;
 
@@ -111,7 +111,7 @@ uint32_t ReadVarLen(BufferReader& buffer)
     return value;
 }
 
-const char* MIDIParser::MidiMetaToStr(const EMidiMeta& midiMeta)
+const char* MIDIParserBase::MidiMetaToStr(const EMidiMeta& midiMeta)
 {
     switch (midiMeta) 
     {
@@ -138,7 +138,7 @@ const char* MIDIParser::MidiMetaToStr(const EMidiMeta& midiMeta)
     }
 }
 
-const char* MIDIParser::SysEventToStr(const ESysEvent& sysEvent)
+const char* MIDIParserBase::SysEventToStr(const ESysEvent& sysEvent)
 {
     switch (sysEvent) 
     {
@@ -161,7 +161,7 @@ const char* MIDIParser::SysEventToStr(const ESysEvent& sysEvent)
     }
 }
 
-const char* MIDIParser::ENoteEventToStr(const ENoteEvent& noteEvent)
+const char* MIDIParserBase::ENoteEventToStr(const ENoteEvent& noteEvent)
 {
     switch (noteEvent) {
         case ENoteEvent::NOTE_OFF: return "Note Off";
@@ -176,7 +176,7 @@ const char* MIDIParser::ENoteEventToStr(const ENoteEvent& noteEvent)
     }
 }
 
-MetaEvent MIDIParser::LoadMetaEventFromBuffer(BufferReader& buffer)
+MetaEvent MIDIParserBase::LoadMetaEventFromBuffer(BufferReader& buffer)
 {
     MetaEvent metaEvent;
     metaEvent.type = *(EMidiMeta*)buffer.Consume(sizeof(EMidiMeta));
@@ -197,7 +197,7 @@ MetaEvent MIDIParser::LoadMetaEventFromBuffer(BufferReader& buffer)
     return metaEvent;
 }
 
-SysexEvent MIDIParser::LoadSysexEventFromBuffer(const MessageStatus& status, BufferReader& buffer)
+SysexEvent MIDIParserBase::LoadSysexEventFromBuffer(const MessageStatus& status, BufferReader& buffer)
 {
     SysexEvent sysEvent;
     sysEvent.type = (ESysEvent) status.value;
@@ -207,7 +207,7 @@ SysexEvent MIDIParser::LoadSysexEventFromBuffer(const MessageStatus& status, Buf
     return sysEvent;
 }
 
-ChannelEvent MIDIParser::LoadChannelEventDataFromBuffer(MessageStatus& midiEvent, BufferReader& buffer)
+ChannelEvent MIDIParserBase::LoadChannelEventDataFromBuffer(MessageStatus& midiEvent, BufferReader& buffer)
 {
     ChannelEvent channelEvent;
 
@@ -245,7 +245,7 @@ ChannelEvent MIDIParser::LoadChannelEventDataFromBuffer(MessageStatus& midiEvent
     return channelEvent;
 }
 
-TrackHeader MIDIParser::LoadTrackHeaderFromBuffer(BufferReader& buffer)
+TrackHeader MIDIParserBase::LoadTrackHeaderFromBuffer(BufferReader& buffer)
 {
     TrackHeader trackChunk = * (TrackHeader*)buffer.Consume(sizeof(TrackHeader));
     BigToNativeEndian(trackChunk.length);
@@ -262,10 +262,10 @@ TrackHeader MIDIParser::LoadTrackHeaderFromBuffer(BufferReader& buffer)
     return trackChunk;
 }
 
-void MIDIParser::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtimeStatus)
+void MIDIParserBase::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtimeStatus)
 {
     TrackHeader trackChunk = LoadTrackHeaderFromBuffer(buffer);
-    OnTrackHeaderLoaded(trackChunk);
+    observer->OnTrackHeaderLoaded(trackChunk);
 
     if (trackChunk.length == 0)
         return;
@@ -309,7 +309,7 @@ void MIDIParser::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtim
             ChannelEvent channelEvent = LoadChannelEventDataFromBuffer(runtimeStatus, buffer);
             try 
             {
-                OnChannelEventLoaded(deltaTime, channelEvent, true);
+                observer->OnChannelEventLoaded(deltaTime, channelEvent, true);
             } catch (const std::exception& e)
             {
                 throw MIDIParserException(*this, e.what(), (const char*) buffer.Data());
@@ -321,7 +321,7 @@ void MIDIParser::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtim
 
             // runtimeStatus.Reset();
             SysexEvent sysEvent = LoadSysexEventFromBuffer(*status, buffer);
-            OnSysEventLoaded(deltaTime, sysEvent);
+            observer->OnSysEventLoaded(deltaTime, sysEvent);
         }
         else if (status->IsMetaEvent()) [[unlikely]] // Non-MIDI events / RESET byte
         {
@@ -330,7 +330,7 @@ void MIDIParser::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtim
 
             // parse meta event
             MetaEvent metaEvent = LoadMetaEventFromBuffer(buffer);
-            OnMetaEventLoaded(deltaTime, metaEvent);
+            observer->OnMetaEventLoaded(deltaTime, metaEvent);
 
             if (metaEvent.type == EMidiMeta::END_OF_TRACK)
                 break;
@@ -345,7 +345,7 @@ void MIDIParser::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtim
             assert(int(channelEvent.message) != 240);
             try 
             {
-                OnChannelEventLoaded(deltaTime, channelEvent, false);
+                observer->OnChannelEventLoaded(deltaTime, channelEvent, false);
             } catch (const std::exception& e)
             {
                 throw MIDIParserException(*this, e.what(), (const char*) buffer.Data());
@@ -363,17 +363,17 @@ void MIDIParser::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtim
 
     // bytes = startBytes + trackChunk->length;
 
-    OnTrackLoaded();
+    observer->OnTrackLoaded();
 }
 
-void MIDIParser::LoadFromBuffer(BufferReader& buffer)
+void MIDIParserBase::LoadFromBuffer(BufferReader& buffer)
 {
     debugBufferPtr = &buffer;
     
     const FileHeader header = LoadFileHeaderFromBuffer(buffer);
-    OnFileHeaderLoaded(header);
+    observer->OnFileHeaderLoaded(header);
     FileHeaderData data = LoadFileHeaderDataFromBuffer(buffer);
-    OnFileHeaderDataLoaded(data);
+    observer->OnFileHeaderDataLoaded(data);
 
     MessageStatus runtimeStatus;
     for (size_t i = 0; i < data.nbTracks; i++)
@@ -381,10 +381,10 @@ void MIDIParser::LoadFromBuffer(BufferReader& buffer)
         LoadTrackFromBuffer(buffer, runtimeStatus);
     }
 
-    OnLoadedFromBytes();
+    observer->OnLoadedFromBytes();
 }
 
-void MIDIParser::LoadFromBytes(const char* bytes, size_t size)
+void MIDIParserBase::LoadFromBytes(const char* bytes, size_t size)
 {
     Buffer buffer;
     buffer.bufferStart = (const uint8_t*) bytes;
@@ -394,7 +394,7 @@ void MIDIParser::LoadFromBytes(const char* bytes, size_t size)
     LoadFromBuffer(reader);
 }
 
-void MIDIParser::LoadFromFile(const char* filename)
+void MIDIParserBase::LoadFromFile(const char* filename)
 {
     std::ifstream file (filename, std::ios::in|std::ios::binary|std::ios::ate);
     if (file.is_open())
@@ -406,7 +406,7 @@ void MIDIParser::LoadFromFile(const char* filename)
         file.close();
 
         LoadFromBytes(memblock, size);
-        OnLoadedFromFile(filename);
+        observer->OnLoadedFromFile(filename);
 
         delete[] memblock;
     }

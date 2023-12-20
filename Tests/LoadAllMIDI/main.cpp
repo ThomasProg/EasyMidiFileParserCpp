@@ -50,7 +50,7 @@ void LoadAllMIDI::TryLoadFile(size_t i, const std::filesystem::directory_entry& 
             file.read (memblock, size);
             file.close();
 
-            parser.LoadFromBytes(memblock, size);
+            parser.parser.LoadFromBytes(memblock, size);
             // parser.OnLoadedFromFile(filename);
 
             delete[] memblock;

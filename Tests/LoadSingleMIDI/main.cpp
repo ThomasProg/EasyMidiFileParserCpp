@@ -35,7 +35,7 @@ void TryLoadAllFiles()
             file.read (memblock, size);
             file.close();
 
-            parser.LoadFromBytes(memblock, size);
+            parser.parser.LoadFromBytes(memblock, size);
             // parser.OnLoadedFromFile(filename);
 
             delete[] memblock;

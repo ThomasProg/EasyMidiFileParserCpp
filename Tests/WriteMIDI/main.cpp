@@ -96,7 +96,7 @@ void WriteMIDI()
 
 
     AdvancedMIDIParser parser;
-    parser.LoadFromBytes((const char*)writer.bufferStart, writer.offset);
+    parser.parser.LoadFromBytes((const char*)writer.bufferStart, writer.offset);
 
     free(notePlayBuffer.bufferStart);
     free(writer.bufferStart);

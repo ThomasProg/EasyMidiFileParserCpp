@@ -5,11 +5,11 @@
 #include <map>
 #include <format>
 
-#include "MIDIParser.h"
+#include "MIDIParserBase.h"
 
 class MIDIParserException
 {
-    const MIDIParser& parser;
+    const MIDIParserBase& parser;
     std::vector<uint8_t> bytes;
     const char* bytesPtr;
     std::string str;
@@ -50,7 +50,7 @@ private:
 
 public:
 
-    MIDIParserException(const MIDIParser& newParser, const char* message, const char* newBuffer) 
+    MIDIParserException(const MIDIParserBase& newParser, const char* message, const char* newBuffer) 
         : parser(newParser), 
         bytes(RetrieveBytes(newBuffer)), 
          bytesPtr(newBuffer), 
@@ -58,7 +58,7 @@ public:
     {
 
     }
-    MIDIParserException(const MIDIParser& newParser, const std::string& message, const char* newBuffer) 
+    MIDIParserException(const MIDIParserBase& newParser, const std::string& message, const char* newBuffer) 
         : parser(newParser), 
         bytes(RetrieveBytes(newBuffer)), 
          bytesPtr(newBuffer), 
@@ -66,7 +66,7 @@ public:
     {
 
     }
-    MIDIParserException(const MIDIParser& newParser, std::string&& message, const char* newBuffer) 
+    MIDIParserException(const MIDIParserBase& newParser, std::string&& message, const char* newBuffer) 
         : parser(newParser), 
         bytes(RetrieveBytes(newBuffer)), 
          bytesPtr(newBuffer), 
