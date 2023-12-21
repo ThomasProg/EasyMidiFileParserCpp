@@ -202,16 +202,15 @@ public:
         }
         else if (typeid(*event) == typeid(NoteOff))
         {
-            //NoteOff& noteOff = *(NoteOff*)event.get();
+            NoteOff& noteOff = *(NoteOff*)event.get();
 
-            //auto isSame = [&noteOff](const std::shared_ptr<NoteOnOff>& noteOnOff) 
-            //{
-            //    return noteOnOff->channel == noteOff.channel && noteOnOff->key == noteOff.key;
-            //};
-            //auto it = std::find_if(openNotes.begin(), openNotes.end(), isSame);
-            //NoteOnOff& noteOnOff = **it;
-            //// TODO : Set duration
-            //openNotes.erase(it);
+            auto isSame = [&noteOff](const std::shared_ptr<NoteOnOff>& noteOnOff) 
+            {
+                return noteOnOff->channel == noteOff.channel && noteOnOff->key == noteOff.key;
+            };
+            auto it = std::find_if(openNotes.begin(), openNotes.end(), isSame);
+            NoteOnOff& noteOnOff = **it;
+            openNotes.erase(it);
 
             return true;
         }
