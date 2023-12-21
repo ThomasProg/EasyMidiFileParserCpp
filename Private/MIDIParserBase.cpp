@@ -10,6 +10,7 @@
 #include "MIDIParserException.h"
 #include "EndianHelpers.h"
 #include "Buffers/BufferReader.h"
+#include "IMIDIEventReceiver.h"
 
 void MIDIParserBase::Reduce(size_t& size, size_t reduced)
 {

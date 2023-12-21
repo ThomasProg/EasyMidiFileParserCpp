@@ -32,24 +32,24 @@ public:
         uint64_t metaEvent;
     };
 
-    class MIDIPARSEREXPORT Observer
-    {
-    public:
-        virtual void OnLoadedFromFile(const char* filename) {}
-        virtual void OnLoadedFromBytes() {}
+    // class MIDIPARSEREXPORT Observer
+    // {
+    // public:
+    //     virtual void OnLoadedFromFile(const char* filename) {}
+    //     virtual void OnLoadedFromBytes() {}
 
-        virtual void OnFileHeaderLoaded(const FileHeader& fileHeader) {}
-        virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) {}
+    //     virtual void OnFileHeaderLoaded(const FileHeader& fileHeader) {}
+    //     virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) {}
 
-        virtual void OnTrackHeaderLoaded(TrackHeader& fileHeader) {}
-        virtual void OnTrackLoaded() {}
+    //     virtual void OnTrackHeaderLoaded(TrackHeader& fileHeader) {}
+    //     virtual void OnTrackLoaded() {}
 
-        virtual void OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent) {}
-        virtual void OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent) {}
-        virtual void OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& channelEvent, bool isOpti) {}
-    };
+    //     virtual void OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent) {}
+    //     virtual void OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent) {}
+    //     virtual void OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& channelEvent, bool isOpti) {}
+    // };
 
-    Observer* observer;
+    class IMIDIEventReceiver* observer;
 
 public:
     std::unordered_map<const void*, std::string> byteToDataStr;
@@ -72,7 +72,7 @@ public:
 
     /* static */ MetaEvent LoadMetaEventFromBuffer(BufferReader& buffer);
     /* static */ ChannelEvent LoadChannelEventDataFromBuffer(MessageStatus& midiEvent, BufferReader& buffer);
-    static SysexEvent LoadSysexEventFromBuffer(const MessageStatus& status, BufferReader& buffer);
+    /* static */ SysexEvent LoadSysexEventFromBuffer(const MessageStatus& status, BufferReader& buffer);
 
     void LoadFromBuffer(BufferReader& buffer);
     void LoadFromBytes(const char* bytes, size_t size);

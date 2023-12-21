@@ -2,12 +2,13 @@
 #define _ADVANCED_MIDI_PARSER_H_
 
 #include "MIDIParserBase.h"
+#include "IMIDIEventReceiver.h"
 
 // Parser that keeps track of deltatime and other data.
 // 1 dynamic memory allocation (to allocate dt for tracks).
 // Uses virtual functions as callbacks.
 // Possess more specialized callback functions
-class MIDIPARSEREXPORT  AdvancedMIDIParser : public MIDIParserBase::Observer
+class MIDIPARSEREXPORT  AdvancedMIDIParser : public IMIDIEventReceiver
 {
 public:
     MIDIParserBase parser;
@@ -28,41 +29,16 @@ public:
     }
     ~AdvancedMIDIParser();
     void AddTimeToTrack(int16_t trackIndex, uint32_t deltaTime);
-
-    // Begin - MIDIParser
-    virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) override;
-    virtual void OnTrackLoaded() override;
-    virtual void OnTrackHeaderLoaded(TrackHeader& fileHeader) override;
-    virtual void OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent) override;
-    virtual void OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent) override;
-    virtual void OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& channelEvent, bool isOpti) override;
-    // End - MIDIParser
-
-    // Begin - ChannelEvents
-    virtual void OnNoteOn(int channel, int key, int velocity) {}
-    virtual void OnNoteOff(int channel, int key) {}
-    virtual void OnProgramChange(int channel, int program) {}
-    virtual void OnControlChange(int channel, EControlChange ctrl, int value) {}
-    virtual void OnPitchBend(int channel, int value) {}
-    // End - ChannelEvents
-
-    // Begin - MetaEvents
-    // sf : 0 = key of C, -1 = 1 flat, 1 = 1 sharp
-    // mi : major or minor ?
-    virtual void OnKeySignature(int8_t sf, uint8_t mi) {}
-    virtual void OnText(const char* text, uint32_t length) {}
-    virtual void OnCopyright(const char* copyright, uint32_t length) {}
-    virtual void OnTrackName(const char* trackName, uint32_t length) {}
-    virtual void OnInstrumentName(const char* instrumentName, uint32_t length) {}
-    virtual void OnLyric(const char* lyric, uint32_t length) {}
-    virtual void OnMarker(const char* markerName, uint32_t length) {}
-    virtual void OnCuePoint(const char* cuePointName, uint32_t length) {}
-    // End - MetaEvents
-
+    virtual void OnEvent(const PMIDIEvent& event) override;
     void AddDebugLog(const void* data, const std::string&& message)
     {
         parser.AddDebugLog(data, std::move(message));
     }
+
+    // Begin - IMIDIEventReceiver
+    virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) override;
+    virtual void OnTrackLoaded() override;
+    // End - IMIDIEventReceiver
 };
 
 
