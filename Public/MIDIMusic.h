@@ -2,11 +2,8 @@
 
 #include <vector>
 #include <memory>
-#include <set>
 // #include "json/single_include/nlohmann/json.hpp"
 #include "PMIDIEvent.h"
-
-#include "AdvancedMIDIParser.h"
 
 class MIDIMusic
 {
@@ -67,7 +64,7 @@ public:
     }
 };
 
-
+#include "IMIDIEventReceiver.h"
 
 class MIDIMusicFiller : public IMIDIEventReceiver
 {
