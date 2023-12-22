@@ -12,7 +12,6 @@ class MIDIPARSEREXPORT MIDIPlayerAsync
 public:
     AMIDIPlayer* player = nullptr;
     std::atomic<bool> isPlaying;
-    double time = 0.0;
 
 public:
     virtual void Play()
@@ -25,7 +24,7 @@ public:
         {
             auto frameStartTime = std::chrono::high_resolution_clock::now();
 
-            time = std::chrono::duration<double, std::micro>(frameStartTime - programBeginTime).count();
+            double time = std::chrono::duration<double, std::micro>(frameStartTime - programBeginTime).count();
 
             player->ExecuteEventsUntil(time);
         }
@@ -34,11 +33,6 @@ public:
     virtual void Stop()
     {
         isPlaying = false;
-    }
-
-    void PlayStep(double addedTime /* in microseconds */)
-    {
-        player->ExecuteEventsUntil(time + addedTime);
     }
 };
 

@@ -8,6 +8,8 @@ uint16_t AMIDIPlayer::GetNbTracks() const
 
 void AMIDIPlayer::ExecuteEventsUntil(double currentTime /* in microseconds */)
 {
+    time = currentTime;
+
     for (int track = 0; track < GetNbTracks(); track++)
     {
         MIDIMusic::TrackData& tr = music->tracks[track]; 
