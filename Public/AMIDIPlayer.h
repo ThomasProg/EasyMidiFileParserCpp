@@ -35,7 +35,7 @@ public:
     virtual void OnTempo(const Tempo& newTempo) override
     {
         Super::OnTempo(newTempo);
-        tempo = newTempo.newTempo;
+        tempo = 1000.0 * 1000.0 * double(newTempo.newTempo) / 60.0;
     }
 
     void PlayStep(double addedTime /* in microseconds */)
