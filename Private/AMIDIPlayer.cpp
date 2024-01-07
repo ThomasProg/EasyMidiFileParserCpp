@@ -29,33 +29,3 @@ void AMIDIPlayer::ExecuteEventsUntil(double currentTime /* in microseconds */)
         }
     }
 }
-
-//void AMIDIPlayer::ExecuteEventsUntil(double currentTime /* in microseconds */)
-//{
-//    time = currentTime;
-//
-//    for (int track = 0; track < GetNbTracks(); track++)
-//    {
-//        MIDIMusic::TrackData& tr = music->tracks[track];
-//
-//        //double timeSinceLastEvent = currentTime - trackLastEventTime[track];
-//        //uint32_t tickSinceLastEvent = timeSinceLastEvent * music->ticksPerQuarterNote / double(tempo);
-//
-//
-//        while (trackIndices[track] < tr.midiEvents.size())
-//        {
-//            PMIDIEvent& note = *tr.midiEvents[trackIndices[track]];
-//            double nextNoteTime = trackLastEventTime[track] + (double(note.deltaTime * tempo));
-//            if (nextNoteTime <= currentTime)
-//            {
-//                note.Execute(this);
-//                trackIndices[track]++;
-//                trackLastEventTime[track] = nextNoteTime;
-//
-//                //timeSinceLastEvent = currentTime - trackLastEventTime[track];
-//                //tickSinceLastEvent = timeSinceLastEvent * music->ticksPerQuarterNote / double(tempo);
-//            }
-//            else break;
-//        }
-//    }
-//}
