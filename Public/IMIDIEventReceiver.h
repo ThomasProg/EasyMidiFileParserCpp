@@ -22,9 +22,9 @@ public:
     // End - MIDIParser
 
     virtual void OnEvent(const PMIDIEvent& event) {}
-    virtual void OnSysEvent(const PMIDISysEvent& sysEvent) {}
-    virtual void OnMetaEvent(const PMIDIMetaEvent& metaEvent) {}
-    virtual void OnChannelEvent(const PMIDIChannelEvent& channelEvent) {}
+    virtual void OnSysEvent(const PMIDISysEvent& sysEvent) { OnEvent(sysEvent); }
+    virtual void OnMetaEvent(const PMIDIMetaEvent& metaEvent) { OnEvent(metaEvent); }
+    virtual void OnChannelEvent(const PMIDIChannelEvent& channelEvent) { OnEvent(channelEvent); }
 
     // Begin - ChannelEvents
     virtual void OnNoteOn(const NoteOn& noteOn) { OnChannelEvent(noteOn); }
@@ -34,12 +34,18 @@ public:
     virtual void OnProgramChange(const ProgramChange& programChange) { OnChannelEvent(programChange); }
     virtual void OnControlChange(const ControlChange& controlChange) { OnChannelEvent(controlChange); }
     virtual void OnPitchBend(const PitchBend& pitchBend) { OnChannelEvent(pitchBend); }
+
+    virtual void OnNoteAfterTouch(const NoteAfterTouch& noteAfterTouch) { OnChannelEvent(noteAfterTouch); }
+    virtual void OnChannelAfterTouch(const ChannelAfterTouch& channelAfterTouch) { OnChannelEvent(channelAfterTouch); }
     // End - ChannelEvents
 
     // Begin - MetaEvents
     // sf : 0 = key of C, -1 = 1 flat, 1 = 1 sharp
     // mi : major or minor ?
     virtual void OnKeySignature(const KeySignature& keySignature) { OnMetaEvent(keySignature); }
+    virtual void OnTimeSignature(const TimeSignature& timeSignature) { OnMetaEvent(timeSignature); }
+    virtual void OnMIDIPort(const MIDIPort& midiPort) { OnMetaEvent(midiPort); }
+    virtual void OnEndOfTrack(const EndOfTrack& endOfTrack) { OnMetaEvent(endOfTrack); }
     virtual void OnTempo(const Tempo& tempo) { OnMetaEvent(tempo); }
     virtual void OnText(const Text& text) { OnMetaEvent(text); }
     virtual void OnCopyright(const Copyright& copyright) { OnMetaEvent(copyright); }
@@ -49,6 +55,8 @@ public:
     virtual void OnMarker(const Marker& marker) { OnMetaEvent(marker); }
     virtual void OnCuePoint(const CuePoint& cuePoint) { OnMetaEvent(cuePoint); }
     // End - MetaEvents
+
+    virtual void OnUnsupportedEvent(const UnsupportedEvent& unsupportedEvent) { }
 };
 
 #endif

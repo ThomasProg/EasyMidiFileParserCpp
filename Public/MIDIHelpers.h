@@ -4,45 +4,39 @@
 #include <cstdint>
 #include "Macros.h"
 
-#ifdef MAKE_DLL // CPP
-#define MIDIHELPERS __declspec(dllexport)
-#else
-#define MIDIHELPERS __declspec(dllimport)
-#endif
-
-enum class MIDIHELPERS ENoteEvent : uint8_t
+enum class MIDIPARSEREXPORT ENoteEvent : uint8_t
 {
     // Regular Events
-    NOTE_OFF         = 0x80,
-    NOTE_ON          = 0x90,
-    NOTE_AFTER_TOUCH = 0xA0, 
-    CONTROL_CHANGE   = 0xB0, 
-    PGM_CHANGE       = 0xC0,
+    NOTE_OFF = 0x80,
+    NOTE_ON = 0x90,
+    NOTE_AFTER_TOUCH = 0xA0,
+    CONTROL_CHANGE = 0xB0,
+    PGM_CHANGE = 0xC0,
     CHANNEL_AFTER_TOUCH = 0xD0,
     PITCH_BEND = 0xE0,
 };
 
-enum class MIDIHELPERS EMidiMeta : uint8_t
+enum class MIDIPARSEREXPORT EMidiMeta : uint8_t
 {
-    SEQ_NUM         = 0x00,
-    TEXT            = 0x01,
-    COPYRIGHT       = 0x02,
-    TRACK_NAME      = 0x03,
+    SEQ_NUM = 0x00,
+    TEXT = 0x01,
+    COPYRIGHT = 0x02,
+    TRACK_NAME = 0x03,
     INSTRUMENT_NAME = 0x04,
-    LYRICS          = 0x05,
-    MARKER           = 0x06,
-    CUE_POINT       = 0x07,
-    CHANNEL_PREFIX  = 0x20,
-    MIDI_PORT       = 0x21,
-    END_OF_TRACK    = 0x2F,
-    SET_TEMPO       = 0x51,
-    SMPTE_OFFSET    = 0x54,
-    TIME_SIGNATURE  = 0x58,
-    KEY_SIGNATURE   = 0x59,
-    SEQ_SPECIFIC    = 0x7F,
+    LYRICS = 0x05,
+    MARKER = 0x06,
+    CUE_POINT = 0x07,
+    CHANNEL_PREFIX = 0x20,
+    MIDI_PORT = 0x21,
+    END_OF_TRACK = 0x2F,
+    SET_TEMPO = 0x51,
+    SMPTE_OFFSET = 0x54,
+    TIME_SIGNATURE = 0x58,
+    KEY_SIGNATURE = 0x59,
+    SEQ_SPECIFIC = 0x7F,
 };
 
-enum class MIDIHELPERS EControlChange : uint8_t
+enum class MIDIPARSEREXPORT EControlChange : uint8_t
 {
     BANK_SELECT = 0,
     MODULATION_WHEEL = 1,
@@ -55,17 +49,17 @@ enum class MIDIHELPERS EControlChange : uint8_t
     BALANCE = 8,
 
     PAN = 10,
-    EXPRESSION = 11,      
+    EXPRESSION = 11,
     EFFECT_CONTROLLER_1 = 12,
     EFFECT_CONTROLLER_2 = 13,
     GENERAL_PURPOSE_1 = 16,
     GENERAL_PURPOSE_2 = 17,
     GENERAL_PURPOSE_3 = 18,
-    GENERAL_PURPOSE_4 = 19,  
+    GENERAL_PURPOSE_4 = 19,
 
     DAMPER_PEDAL = 64,
     PORTAMENTO_ON_OFF = 65,
-    SOSTENUTO_PEDAL_ON_OFF = 66,  
+    SOSTENUTO_PEDAL_ON_OFF = 66,
     SOFT_PEDAL_ON_OFF = 67,
     LEGATO_FOOT_SWITCH = 68,
     HOLD_2 = 69,
@@ -95,9 +89,9 @@ enum class MIDIHELPERS EControlChange : uint8_t
 
     DATA_INCREMENT = 96,
     DATA_DECREMENT = 97,
-    NON_REGISTERED_PARAMETER_NUMBER_LSB = 98,   
+    NON_REGISTERED_PARAMETER_NUMBER_LSB = 98,
     NON_REGISTERED_PARAMETER_NUMBER_MSB = 99,
-    REGISTERED_PARAMETER_NUMBER_LSB = 100,   
+    REGISTERED_PARAMETER_NUMBER_LSB = 100,
     REGISTERED_PARAMETER_NUMBER_MSB = 101,
 
     ALL_SOUND_OFF = 120,
@@ -111,7 +105,7 @@ enum class MIDIHELPERS EControlChange : uint8_t
 };
 
 // https://users.cs.cf.ac.uk/dave/Multimedia/node158.html
-enum class MIDIHELPERS ESysEvent : uint8_t
+enum class MIDIPARSEREXPORT ESysEvent : uint8_t
 {
     // System exclusive messages (i.e. non standard)
     SYSTEM_EXCLUSIVE = 0xF0,

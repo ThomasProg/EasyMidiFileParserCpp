@@ -6,9 +6,9 @@
 #include "MIDIMusic.h"
 #include "MIDIMusic_AbsoluteConverter.h"
 #include "MIDIMusic_RelativeConverter.h"
-
+ 
 // Reduces tick precision
-class MIDIMusic_CompressorConverter
+class MIDIPARSEREXPORT MIDIMusic_CompressorConverter
 {
 public:
     int16_t newTicksPerQuarterNote = 4; // is 4 the default ?
@@ -20,38 +20,16 @@ public:
 
     }
 
-    void Convert(class MIDIMusic& newMusic)
-    {
-        // Works better in absolute dt because of imprecision
-        MIDIMusic_AbsoluteConverter::Convert(newMusic);
+    void Convert(class MIDIMusic& newMusic);
 
-        this->music = &newMusic;
-        for (MIDIMusic::TrackData& trackData : newMusic.tracks)
-        {
-            trackData.ForEachEvent(*this);
-        }
-        newMusic.ticksPerQuarterNote = newTicksPerQuarterNote;
-
-        // Converts back
-        MIDIMusic_RelativeConverter::Convert(newMusic);
-    }
+    // If music is already in absolute time, then performance gain
+    void ConvertUnsafe(class MIDIMusic& newMusic);
 
     uint32_t OldToNewTime(uint32_t oldTime)
     {
         return oldTime * newTicksPerQuarterNote / music->ticksPerQuarterNote;
     }
 
-    bool operator()(std::shared_ptr<PMIDIEvent>& event)
-    {
-        event->deltaTime = OldToNewTime(event->deltaTime);
-
-        if (typeid(*event) == typeid(NoteOnOff))
-        {
-            NoteOnOff& noteOnOff = *(NoteOnOff*)event.get();
-            noteOnOff.duration = OldToNewTime(noteOnOff.duration);
-        }
-
-        return false;
-    }
+    bool operator()(std::shared_ptr<PMIDIEvent>& event);
 };
 

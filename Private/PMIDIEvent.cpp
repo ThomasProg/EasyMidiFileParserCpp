@@ -1,6 +1,11 @@
 #include "PMIDIEvent.h"
 #include "IMIDIEventReceiver.h"
 
+void PMIDISysEvent::Execute(IMIDIEventReceiver* receiver)
+{
+    receiver->OnSysEvent(*this);
+}
+
 void NoteOn::Execute(IMIDIEventReceiver* receiver)
 {
     receiver->OnNoteOn(*this);
@@ -26,6 +31,16 @@ void PitchBend::Execute(IMIDIEventReceiver* receiver)
     receiver->OnPitchBend(*this);
 }
 
+void NoteAfterTouch::Execute(IMIDIEventReceiver* receiver)
+{
+    receiver->OnNoteAfterTouch(*this);
+}
+
+void ChannelAfterTouch::Execute(IMIDIEventReceiver* receiver)
+{
+    receiver->OnChannelAfterTouch(*this);
+}
+
 void ProgramChange::Execute(IMIDIEventReceiver* receiver) 
 {
     receiver->OnProgramChange(*this);
@@ -34,6 +49,21 @@ void ProgramChange::Execute(IMIDIEventReceiver* receiver)
 void KeySignature::Execute(IMIDIEventReceiver* receiver) 
 {
     receiver->OnKeySignature(*this);
+}
+
+void TimeSignature::Execute(IMIDIEventReceiver* receiver)
+{
+    receiver->OnTimeSignature(*this);
+}
+
+void MIDIPort::Execute(IMIDIEventReceiver* receiver)
+{
+    receiver->OnMIDIPort(*this);
+}
+
+void EndOfTrack::Execute(IMIDIEventReceiver* receiver)
+{
+    receiver->OnEndOfTrack(*this);
 }
 
 void Tempo::Execute(IMIDIEventReceiver* receiver) 
@@ -76,7 +106,10 @@ void CuePoint::Execute(IMIDIEventReceiver* receiver)
     receiver->OnCuePoint(*this);
 }
 
-
+void UnsupportedEvent::Execute(IMIDIEventReceiver* receiver)
+{
+    receiver->OnUnsupportedEvent(*this);
+}
 
 
 

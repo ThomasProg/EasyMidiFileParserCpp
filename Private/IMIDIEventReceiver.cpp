@@ -10,6 +10,10 @@ void IMIDIEventReceiver::OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEve
         assert(sysEvent.messageLength == 1);
         uint8_t songNumber = *(uint8_t*)sysEvent.message;
     }
+
+    PMIDISysEvent midiSysEvent;
+    midiSysEvent.deltaTime = deltaTime;
+    OnSysEvent(midiSysEvent);
 }
 
 void IMIDIEventReceiver::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEvent)
@@ -21,14 +25,9 @@ void IMIDIEventReceiver::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
     case EMidiMeta::SET_TEMPO:
     {
         assert(metaEvent.length == 3);
-        // TODO : not changing tempo? fix
-        // if (500000 != tempo)
-        //     tempo = (metaEvent.bytes[0] << 16) + (metaEvent.bytes[1] << 8) + metaEvent.bytes[2];
-        // std::cout << "tempo : " << tempo << " / index : " << currentTrackIndex << std::endl; 
-
         Tempo tempo;
         tempo.deltaTime = deltaTime;
-        tempo.newTempo = 500000; // TODO : Fix
+        tempo.newTempo = (metaEvent.bytes[0] << 16) | (metaEvent.bytes[1] << 8) | metaEvent.bytes[2];
         OnTempo(tempo);
         break;
     }
@@ -36,10 +35,13 @@ void IMIDIEventReceiver::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
     case EMidiMeta::TIME_SIGNATURE:
     {
         assert(metaEvent.length == 4);
+        TimeSignature timeSignature;
+        timeSignature.deltaTime = deltaTime;
         int nominator = metaEvent.bytes[0];
         int denominator = 2 << metaEvent.bytes[1];
         int clocks = metaEvent.bytes[2];
         int notes = metaEvent.bytes[3];
+        OnTimeSignature(timeSignature);
         break;
     }
 
@@ -62,10 +64,19 @@ void IMIDIEventReceiver::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
     break;
 
     case EMidiMeta::MIDI_PORT:
+    {
+        MIDIPort midiPort;
+        midiPort.deltaTime = deltaTime;
+        OnMIDIPort(midiPort);
         break;
-
+    }
     case EMidiMeta::END_OF_TRACK:
+    {
+        EndOfTrack endOfTrack;
+        endOfTrack.deltaTime = deltaTime;
+        OnEndOfTrack(endOfTrack);
         break;
+    }
 
         // case EMidiMeta::SEQ_SPECIFIC:
         //     break;
@@ -142,7 +153,8 @@ void IMIDIEventReceiver::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
     }
 
     default:
-        // throw std::runtime_error(std::string("OnMetaEventLoaded/") + std::to_string((int)metaEvent.type) );
+        // Deltatime should be used
+        throw std::runtime_error(std::string("OnMetaEventLoaded/") + std::to_string((int)metaEvent.type) );
         break;
     }
 }
@@ -294,10 +306,20 @@ void IMIDIEventReceiver::OnChannelEventLoaded(uint32_t deltaTime, ChannelEvent& 
         }
 
         case ENoteEvent::NOTE_AFTER_TOUCH:
+        {
+            NoteAfterTouch noteAfterTouch;
+            noteAfterTouch.deltaTime = deltaTime;
+            OnNoteAfterTouch(noteAfterTouch);
             break;
+        }
 
         case ENoteEvent::CHANNEL_AFTER_TOUCH:
+        {
+            ChannelAfterTouch channelAfterTouch;
+            channelAfterTouch.deltaTime = deltaTime;
+            OnChannelAfterTouch(channelAfterTouch);
             break;
+        }
 
         default:
             throw std::runtime_error(std::string("OnChannelEventLoaded/") + std::to_string((int)channelEvent.message) + " / Opti : " + std::to_string(isOpti));

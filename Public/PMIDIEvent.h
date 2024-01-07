@@ -27,7 +27,7 @@ struct MIDIPARSEREXPORT PMIDIMetaEvent : PMIDIEvent
 
 struct MIDIPARSEREXPORT PMIDISysEvent : PMIDIEvent
 {
-
+    virtual void Execute(IMIDIEventReceiver* receiver) override;
 };
 
 struct MIDIPARSEREXPORT NoteOn : PMIDIChannelEvent
@@ -126,6 +126,18 @@ struct MIDIPARSEREXPORT PitchBend : PMIDIChannelEvent
     virtual void Execute(IMIDIEventReceiver* receiver) override;
 };
 
+// @TODO
+struct MIDIPARSEREXPORT NoteAfterTouch : PMIDIChannelEvent
+{
+    virtual void Execute(IMIDIEventReceiver* receiver) override;
+};
+
+// @TODO
+struct MIDIPARSEREXPORT ChannelAfterTouch : PMIDIChannelEvent
+{
+    virtual void Execute(IMIDIEventReceiver* receiver) override;
+};
+
 
 struct MIDIPARSEREXPORT ProgramChange : PMIDIChannelEvent
 {
@@ -142,9 +154,27 @@ struct MIDIPARSEREXPORT KeySignature : PMIDIMetaEvent
     virtual void Execute(IMIDIEventReceiver* receiver) override;
 };
 
+// @TODO
+struct MIDIPARSEREXPORT TimeSignature : PMIDIMetaEvent
+{
+    virtual void Execute(IMIDIEventReceiver* receiver) override;
+};
+
+// @TODO
+struct MIDIPARSEREXPORT MIDIPort : PMIDIMetaEvent
+{
+    virtual void Execute(IMIDIEventReceiver* receiver) override;
+};
+
+// @TODO
+struct MIDIPARSEREXPORT EndOfTrack : PMIDIMetaEvent
+{
+    virtual void Execute(IMIDIEventReceiver* receiver) override;
+};
+
 struct MIDIPARSEREXPORT Tempo : PMIDIMetaEvent
 {
-    uint8_t newTempo = 0;
+    uint32_t newTempo = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
 };
@@ -187,6 +217,11 @@ struct MIDIPARSEREXPORT Marker : PMIDIMetaEvent_WithText
 };
 
 struct MIDIPARSEREXPORT CuePoint : PMIDIMetaEvent_WithText 
+{
+    virtual void Execute(IMIDIEventReceiver* receiver) override;
+};
+
+struct MIDIPARSEREXPORT UnsupportedEvent : PMIDIEvent
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
 };

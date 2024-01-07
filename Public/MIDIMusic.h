@@ -5,7 +5,7 @@
 // #include "json/single_include/nlohmann/json.hpp"
 #include "PMIDIEvent.h"
 
-class MIDIMusic
+class MIDIPARSEREXPORT MIDIMusic
 {
 public:
     struct TrackData
@@ -24,8 +24,9 @@ public:
                 {
                     uint32_t removedEventDeltatime = (*it)->deltaTime;
                     it = midiEvents.erase(it);
-                    if (it != midiEvents.end())
-                        (*it)->deltaTime += removedEventDeltatime;
+                    if (it == midiEvents.end())
+                        break;
+                    (*it)->deltaTime += removedEventDeltatime;
                 }
                 else 
                 {
@@ -66,19 +67,13 @@ public:
 
 #include "IMIDIEventReceiver.h"
 
-class MIDIMusicFiller : public IMIDIEventReceiver
+class MIDIPARSEREXPORT MIDIMusicFiller : public IMIDIEventReceiver
 {
 public:
     using Super = IMIDIEventReceiver;
 
     class MIDIMusic* music = nullptr;
     uint32_t currentTrackIndex = 0;
-
-    template<typename T>
-    void CopyEvent(const T& event)
-    {
-        music->tracks[currentTrackIndex].midiEvents.emplace_back(new T(event));
-    }
 
     // Begin - MIDIParser
     virtual void OnFileHeaderDataLoaded(FileHeaderData& fileHeaderData) override
@@ -98,59 +93,39 @@ public:
     // End - MIDIParser
 
     // Begin - ChannelEvents
-    virtual void OnNoteOn(const NoteOn& noteOn) override
-    {
-        Super::OnNoteOn(noteOn);
-        // NoteOn* noteOn = new NoteOn();
-        // noteOn->start = timePerTrack[currentTrackIndex];
-        // noteOn->channel = channel;
-        // noteOn->key = key;
-        // noteOn->velocity = velocity;
-
-        CopyEvent(noteOn);
-    }
-    virtual void OnNoteOff(const NoteOff& noteOff) override
-    {
-        Super::OnNoteOff(noteOff);
-        CopyEvent(noteOff);
-    }
-    virtual void OnProgramChange(const ProgramChange& programChange) override
-    {
-        Super::OnProgramChange(programChange);
-        CopyEvent(programChange);
-    }
-    virtual void OnControlChange(const ControlChange& controlChange) override
-    {
-        Super::OnControlChange(controlChange);
-        CopyEvent(controlChange);
-    }
-    virtual void OnPitchBend(const PitchBend& pitchBend) override
-    {
-        Super::OnPitchBend(pitchBend);
-        CopyEvent(pitchBend);
-    }
-
-
-    // virtual void OnControlChange(int channel, EControlChange ctrl, int value) override {}
-    // virtual void OnPitchBend(int channel, int value) override {}
+    virtual void OnNoteOn(const NoteOn& noteOn) override;
+    virtual void OnNoteOff(const NoteOff& noteOff) override;
+    virtual void OnProgramChange(const ProgramChange& programChange) override;
+    virtual void OnControlChange(const ControlChange& controlChange) override;
+    virtual void OnPitchBend(const PitchBend& pitchBend) override;
+    virtual void OnNoteAfterTouch(const NoteAfterTouch& noteAfterTouch) override;
+    virtual void OnChannelAfterTouch(const ChannelAfterTouch& channelAfterTouch) override;
     // // End - ChannelEvents
 
-    // // Begin - MetaEvents
-    // // sf : 0 = key of C, -1 = 1 flat, 1 = 1 sharp
-    // // mi : major or minor ?
-    // virtual void OnKeySignature(int8_t sf, uint8_t mi) override
-    // {
-    //     music->sf = sf;
-    //     music->mi = mi;
-    //     music->isTonalitySet = true;
-    // }
-    // virtual void OnText(const char* text, uint32_t length) override {}
-    // virtual void OnCopyright(const char* copyright, uint32_t length) override {}
-    // virtual void OnTrackName(const char* trackName, uint32_t length) override {}
-    // virtual void OnInstrumentName(const char* instrumentName, uint32_t length) override {}
-    // virtual void OnLyric(const char* lyric, uint32_t length) override {}
-    // virtual void OnMarker(const char* markerName, uint32_t length) override {}
-    // virtual void OnCuePoint(const char* cuePointName, uint32_t length) override {}
-    // // End - MetaEvents
+    // Begin - MetaEvents
+    // sf : 0 = key of C, -1 = 1 flat, 1 = 1 sharp
+    // mi : major or minor ?
+    virtual void OnKeySignature(const KeySignature& keySignature) override;
+    virtual void OnTimeSignature(const TimeSignature& timeSignature) override;
+    virtual void OnMIDIPort(const MIDIPort& midiPort) override;
+    virtual void OnEndOfTrack(const EndOfTrack& endOfTrack) override;
+    virtual void OnTempo(const Tempo& tempo) override;
+    virtual void OnText(const Text& text) override;
+    virtual void OnCopyright(const Copyright& copyright) override;
+    virtual void OnTrackName(const TrackName& trackName) override;
+    virtual void OnInstrumentName(const InstrumentName& instrumentName) override;
+    virtual void OnLyrics(const Lyrics& lyrics) override;
+    virtual void OnMarker(const Marker& marker) override;
+    virtual void OnCuePoint(const CuePoint& cuePoint) override;
+    // End - MetaEvents
+
+    // Begin - SysEvents
+    virtual void OnSysEvent(const PMIDISysEvent& sysEvent) override;
+    // End - SysEvents
+
+    virtual void OnUnsupportedEvent(const UnsupportedEvent& unsupportedEvent) override;
+
+
+    virtual void OnEvent(const PMIDIEvent& event) override;
 };
 

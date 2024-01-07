@@ -1,5 +1,6 @@
-#include "MIDIMusic_NoteOnOffConverter.h"
+#include "Converters/MIDIMusic_NoteOnOffConverter.h"
 #include "MIDIMusic.h"
+#include <stdexcept>
 
 void MIDIMusic_NoteOnOffConverter::Convert(MIDIMusic& music)
 {
@@ -8,8 +9,6 @@ void MIDIMusic_NoteOnOffConverter::Convert(MIDIMusic& music)
         trackData.ForEachEvent(*this);
         openNotes.clear();
     }
-
-    openNotes.clear();
 }
 
 bool MIDIMusic_NoteOnOffConverter::operator()(std::shared_ptr<PMIDIEvent>& event)
@@ -19,11 +18,11 @@ bool MIDIMusic_NoteOnOffConverter::operator()(std::shared_ptr<PMIDIEvent>& event
         noteOnOff->duration += event->deltaTime;
     }
 
-    if (typeid(*event) == typeid(NoteOn))
+    if (NoteOn* noteOnPtr = dynamic_cast<NoteOn*>(event.get()))
     {
-        NoteOn& noteOn = *(NoteOn*)event.get();
+        NoteOn& noteOn = *noteOnPtr;
 
-        std::shared_ptr<NoteOnOff> noteOnOff = std::make_shared<NoteOnOff>();;
+        std::shared_ptr<NoteOnOff> noteOnOff = std::make_shared<NoteOnOff>();
         
         noteOnOff->deltaTime = noteOn.deltaTime;
         noteOnOff->channel = noteOn.channel;
@@ -36,17 +35,24 @@ bool MIDIMusic_NoteOnOffConverter::operator()(std::shared_ptr<PMIDIEvent>& event
 
         return false;
     }
-    else if (typeid(*event) == typeid(NoteOff))
+    else if (NoteOff* noteOffPtr = dynamic_cast<NoteOff*>(event.get()))
     {
-        NoteOff& noteOff = *(NoteOff*)event.get();
+        NoteOff& noteOff = *noteOffPtr;
 
         auto isSame = [&noteOff](const std::shared_ptr<NoteOnOff>& noteOnOff) 
         {
             return noteOnOff->channel == noteOff.channel && noteOnOff->key == noteOff.key;
         };
         auto it = std::find_if(openNotes.begin(), openNotes.end(), isSame);
-        NoteOnOff& noteOnOff = **it;
-        openNotes.erase(it);
+        if (it != openNotes.end()) // shouldn't be the case
+        {
+            NoteOnOff& noteOnOff = **it;
+            openNotes.erase(it);
+        }
+        else 
+        {
+            throw std::runtime_error("NoteOff doesn't have corresponding NoteOn");
+        }
 
         return true;
     }

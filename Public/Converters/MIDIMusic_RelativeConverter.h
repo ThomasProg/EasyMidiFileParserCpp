@@ -10,7 +10,7 @@
 class MIDIMusic_RelativeConverter
 {
 public:
-    static void Convert(class MIDIMusic& newMusic)
+    static void MIDIPARSEREXPORT Convert(class MIDIMusic& newMusic)
     {
         for (MIDIMusic::TrackData& trackData : newMusic.tracks)
         {
