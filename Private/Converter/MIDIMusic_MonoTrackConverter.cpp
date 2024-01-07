@@ -16,7 +16,7 @@ void MIDIMusic_MonoTrackConverter::Convert(class MIDIMusic& newMusic)
 
 void MIDIMusic_MonoTrackConverter::ConvertUnsafe(class MIDIMusic& newMusic)
 {
-    std::map<uint32_t /*time*/, std::shared_ptr<PMIDIEvent>> map;
+    std::multimap<uint32_t /*time*/, std::shared_ptr<PMIDIEvent>> map;
 
     for (MIDIMusic::TrackData& trackData : newMusic.tracks)
     {

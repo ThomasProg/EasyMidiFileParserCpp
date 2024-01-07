@@ -262,7 +262,6 @@ TrackHeader MIDIParserBase::LoadTrackHeaderFromBuffer(BufferReader& buffer)
 
     return trackChunk;
 }
-std::vector<uint32_t> trackNbTotalTicks;
 void MIDIParserBase::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& runtimeStatus)
 {
     TrackHeader trackChunk = LoadTrackHeaderFromBuffer(buffer);
@@ -270,8 +269,6 @@ void MIDIParserBase::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& ru
 
     if (trackChunk.length == 0)
         return;
-
-    uint32_t nbTotalTicks = 0;
 
     const uint8_t* startBytes = buffer.Data();
 
@@ -281,7 +278,6 @@ void MIDIParserBase::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& ru
     {
         byteToDataStr[buffer.Data()] = "DeltaTime";
         uint32_t deltaTime = ReadVarLen(buffer);
-        nbTotalTicks += deltaTime;
         //if ((startBytes + trackChunk.length) - buffer.Data() <= 0)
         //{
         //    //bytes = startBytes + trackChunk.length;
@@ -356,8 +352,6 @@ void MIDIParserBase::LoadTrackFromBuffer(BufferReader& buffer, MessageStatus& ru
             } 
         }
     }
-
-    trackNbTotalTicks.push_back(nbTotalTicks);
 
     if (buffer.Data() != startBytes + trackChunk.length)
     {

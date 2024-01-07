@@ -10,7 +10,7 @@ class MIDIPARSEREXPORT AMIDIPlayer : public IMIDIEventReceiver
 
     // only 3 bytes
     // microsecondsPerQuarterNote;
-    uint32_t tempo = 0.5*1000*1000; // 120 bpm by default (0.5s delay, so 5 * 1000 * 1000 microseconds)
+    uint32_t tempo = 0.5*1000.0*1000.0; // 120 bpm by default (0.5s delay, so 5 * 1000 * 1000 microseconds)
     double time = 0.0;
 
 public:
@@ -35,7 +35,7 @@ public:
     virtual void OnTempo(const Tempo& newTempo) override
     {
         Super::OnTempo(newTempo);
-        tempo = 1000.0 * 1000.0 * 60.0 / double(newTempo.newTempo);
+        tempo = newTempo.newTempo;
     }
 
     void PlayStep(double addedTime /* in microseconds */)
