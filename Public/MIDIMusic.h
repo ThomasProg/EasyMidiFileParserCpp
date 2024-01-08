@@ -47,6 +47,7 @@ public:
 
     uint32_t GetDurationInTicks() const;
     double GetDurationInMicroseconds() const;
+    uint32_t GetNbChannels() const;
 
     template<typename CALLBACK>
     void ForEachTrack(CALLBACK&& callback)

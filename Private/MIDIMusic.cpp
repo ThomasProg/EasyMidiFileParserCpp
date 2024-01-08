@@ -65,3 +65,20 @@ double MIDIMusic::GetDurationInMicroseconds() const
 
     return totalTime;
 }
+
+#include <set>
+uint32_t MIDIMusic::GetNbChannels() const
+{
+    std::set<uint32_t> channels;
+    for (auto& track : tracks)
+    {
+        for (auto& e : track.midiEvents)
+        {
+            if (PMIDIChannelEvent* channelEvent = dynamic_cast<PMIDIChannelEvent*>(e.get()))
+            {
+                channels.emplace(channelEvent->channel);
+            }
+        }
+    }
+    return channels.size();
+}
