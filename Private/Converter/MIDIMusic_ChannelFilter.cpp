@@ -5,9 +5,6 @@
 
 void MIDIMusic_ChannelFilter::Convert(class MIDIMusic& music)
 {
-    if (music.tracks.size() != 1)
-        return;
-
     for (auto& track : music.tracks)
     {
         track.ForEachEvent([&](std::shared_ptr<PMIDIEvent>& elem)
