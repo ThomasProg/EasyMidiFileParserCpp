@@ -21,7 +21,7 @@ void MIDIMusic_InstrumentFilter::Convert(class MIDIMusic& music)
         else if (const NoteOnOff* noteOnOff = dynamic_cast<NoteOnOff*>(elem.get()))
         {
             const uint32_t program = channelToProgram[noteOnOff->channel];
-            return (program >= start && program <= end);
+            return (program >= start && program <= end) == filterOut;
         }
         return false;
     });
