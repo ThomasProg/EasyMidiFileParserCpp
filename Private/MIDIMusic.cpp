@@ -1,134 +1,67 @@
 #include "MIDIMusic.h"
+#include <map>
 
-
-template<typename T>
-void CopyEvent(MIDIMusicFiller& filler, const T& event)
+uint32_t MIDIMusic::GetDurationInTicks() const
 {
-    if (filler.music)
+    uint32_t maxTicks = 0;
+    for (auto& track : tracks)
     {
-        filler.music->tracks[filler.currentTrackIndex].midiEvents.emplace_back(new T(event));
+        uint32_t trackNbTicks = 0;
+        for (auto& e : track.midiEvents)
+        {
+            trackNbTicks += e->deltaTime;
+        }
+
+        maxTicks = std::max(maxTicks, trackNbTicks);
     }
+    return maxTicks;
 }
 
-void MIDIMusicFiller::OnNoteOn(const NoteOn& noteOn)
+double MIDIMusic::GetDurationInMicroseconds() const
 {
-    Super::OnNoteOn(noteOn);
-    // NoteOn* noteOn = new NoteOn();
-    // noteOn->start = timePerTrack[currentTrackIndex];
-    // noteOn->channel = channel;
-    // noteOn->key = key;
-    // noteOn->velocity = velocity;
+    std::map<uint32_t, uint32_t> tickTimeToNewTempo;
+    
+    uint32_t maxTicks = 0;
+    for (auto& track : tracks)
+    {
+        uint32_t trackNbTicks = 0;
+        for (auto& e : track.midiEvents)
+        {
+            trackNbTicks += e->deltaTime;
 
-    CopyEvent(*this, noteOn);
-}
-void MIDIMusicFiller::OnNoteOff(const NoteOff& noteOff)
-{
-    Super::OnNoteOff(noteOff);
-    CopyEvent(*this, noteOff);
-}
-void MIDIMusicFiller::OnProgramChange(const ProgramChange& programChange)
-{
-    Super::OnProgramChange(programChange);
-    CopyEvent(*this, programChange);
-}
-void MIDIMusicFiller::OnControlChange(const ControlChange& controlChange)
-{
-    Super::OnControlChange(controlChange);
-    CopyEvent(*this, controlChange);
-}
-void MIDIMusicFiller::OnPitchBend(const PitchBend& pitchBend)
-{
-    Super::OnPitchBend(pitchBend);
-    CopyEvent(*this, pitchBend);
-}
+            if (Tempo* tempo = dynamic_cast<Tempo*>(e.get()))
+            {
+                tickTimeToNewTempo.emplace(trackNbTicks, tempo->newTempo);
+            }
+        }
 
-void MIDIMusicFiller::OnNoteAfterTouch(const NoteAfterTouch& noteAfterTouch)
-{
-    Super::OnNoteAfterTouch(noteAfterTouch);
-    CopyEvent(*this, noteAfterTouch);
-}
-void MIDIMusicFiller::OnChannelAfterTouch(const ChannelAfterTouch& channelAfterTouch)
-{
-    Super::OnChannelAfterTouch(channelAfterTouch);
-    CopyEvent(*this, channelAfterTouch);
-}
+        maxTicks = std::max(maxTicks, trackNbTicks);
+    }
 
+    // Compute time from start to last Tempo Event
+    double totalTime = 0.0; // microseconds / quarter note
+    double currentTempo = 0.5 * 1000.0 * 1000.0; // microseconds / quarter note
+    uint32_t lastTickTime = 0;
+    for (auto& [ticks, tempo] : tickTimeToNewTempo)
+    {
+        const double tickDuration = currentTempo / ticksPerQuarterNote; // in microseconds
+        const uint32_t deltaTickTime = ticks - lastTickTime;
+        const double deltaTimeSinceLastTempoEvent = deltaTickTime * tickDuration; // in microseconds
 
-void MIDIMusicFiller::OnKeySignature(const KeySignature& keySignature)
-{
-    Super::OnKeySignature(keySignature);
-    CopyEvent(*this, keySignature);
-}
-void MIDIMusicFiller::OnTimeSignature(const TimeSignature& timeSignature)
-{
-    Super::OnTimeSignature(timeSignature);
-    CopyEvent(*this, timeSignature);
-}
-void MIDIMusicFiller::OnMIDIPort(const MIDIPort& midiPort)
-{
-    Super::OnMIDIPort(midiPort);
-    CopyEvent(*this, midiPort);
-}
-void MIDIMusicFiller::OnEndOfTrack(const EndOfTrack& endOfTrack)
-{
-    Super::OnEndOfTrack(endOfTrack);
-    CopyEvent(*this, endOfTrack);
-}
-void MIDIMusicFiller::OnTempo(const Tempo& tempo)
-{
-    Super::OnTempo(tempo);
-    CopyEvent(*this, tempo);
-}
-void MIDIMusicFiller::OnText(const Text& text)
-{
-    Super::OnText(text);
-    CopyEvent(*this, text);
-}
-void MIDIMusicFiller::OnCopyright(const Copyright& copyright)
-{
-    Super::OnCopyright(copyright);
-    CopyEvent(*this, copyright);
-}
-void MIDIMusicFiller::OnTrackName(const TrackName& trackName)
-{
-    Super::OnTrackName(trackName);
-    CopyEvent(*this, trackName);
-}
-void MIDIMusicFiller::OnInstrumentName(const InstrumentName& instrumentName)
-{
-    Super::OnInstrumentName(instrumentName);
-    CopyEvent(*this, instrumentName);
-}
-void MIDIMusicFiller::OnLyrics(const Lyrics& lyrics)
-{
-    Super::OnLyrics(lyrics);
-    CopyEvent(*this, lyrics);
-}
-void MIDIMusicFiller::OnMarker(const Marker& marker)
-{
-    Super::OnMarker(marker);
-    CopyEvent(*this, marker);
-}
-void MIDIMusicFiller::OnCuePoint(const CuePoint& cuePoint)
-{
-    Super::OnCuePoint(cuePoint);
-    CopyEvent(*this, cuePoint);
-}
+        totalTime += deltaTimeSinceLastTempoEvent;
 
+        currentTempo = tempo;
+        lastTickTime = ticks;
+    }
 
-void MIDIMusicFiller::OnSysEvent(const PMIDISysEvent& sysEvent)
-{
-    Super::OnSysEvent(sysEvent);
-    CopyEvent(*this, sysEvent);
-}
+    // Compute time from last Tempo Event to end
+    {
+        const double tickDuration = currentTempo / ticksPerQuarterNote; // in microseconds
+        const uint32_t deltaTickTime = maxTicks - lastTickTime;
+        const double deltaTimeSinceLastTempoEvent = deltaTickTime * tickDuration; // in microseconds
 
-void MIDIMusicFiller::OnUnsupportedEvent(const UnsupportedEvent& unsupportedEvent)
-{
-    Super::OnUnsupportedEvent(unsupportedEvent);
-    CopyEvent(*this, unsupportedEvent);
-}
+        totalTime += deltaTimeSinceLastTempoEvent;
+    }
 
-void MIDIMusicFiller::OnEvent(const PMIDIEvent& event)
-{
-
+    return totalTime;
 }
