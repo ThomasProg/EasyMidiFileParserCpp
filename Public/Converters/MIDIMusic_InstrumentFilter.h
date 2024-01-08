@@ -1,21 +1,15 @@
 #pragma once
 
-// #include ""
-#include <vector>
-#include <memory>
-#include "PMIDIEvent.h"
-
-#include <cassert>
-#include "MIDIMusic.h"
+#include "Macros.h"
+#include <cstdint>
 
 // Only keeps the target instrument
+// Only works for mono tracks
 class MIDIPARSEREXPORT MIDIMusic_InstrumentFilter
 {
 public:
     uint8_t start = 0;
     uint8_t end = 0;
-
-    uint32_t program = 0;
 
     MIDIMusic_InstrumentFilter(uint8_t start, uint8_t end, bool keep = true)
     {

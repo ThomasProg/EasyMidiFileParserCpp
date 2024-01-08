@@ -8,7 +8,7 @@
 class MIDIPARSEREXPORT MIDIMusic
 {
 public:
-    struct TrackData
+    struct MIDIPARSEREXPORT TrackData
     {
         std::vector<std::shared_ptr<PMIDIEvent>> midiEvents;
 
