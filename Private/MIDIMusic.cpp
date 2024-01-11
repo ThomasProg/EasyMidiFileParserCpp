@@ -82,3 +82,25 @@ uint32_t MIDIMusic::GetNbChannels() const
     }
     return channels.size();
 }
+
+std::vector<uint32_t> MIDIMusic::GetProgramsList() const
+{
+    std::vector<std::shared_ptr<ProgramChange>> programs = GetProgramChangeList<ProgramChange>();
+
+    std::set<uint32_t> programsSet;
+    for (auto& program : programs)
+    {
+        programsSet.emplace(program->newProgram);
+    }
+
+    return std::vector<uint32_t>(programsSet.begin(), programsSet.end());
+}
+
+MIDIPARSEREXPORT MIDIMusic* MIDIMusic_Create()
+{
+    return new MIDIMusic();
+}
+MIDIPARSEREXPORT void MIDIMusic_Destroy(MIDIMusic* music)
+{
+    delete music;
+}

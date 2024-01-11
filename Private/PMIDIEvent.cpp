@@ -112,7 +112,38 @@ void UnsupportedEvent::Execute(IMIDIEventReceiver* receiver)
 }
 
 
+uint32_t MIDIEvent_GetDeltaTime(PMIDIEvent* event)
+{
+    return event->deltaTime;
+}
+uint32_t MIDIChannelEvent_GetChannel(PMIDIChannelEvent* event)
+{
+    return event->channel;
+}
 
+uint32_t NoteOn_GetKey(NoteOn* event)
+{
+    return event->key;
+}
+uint32_t NoteOn_GetVelocity(NoteOn* event)
+{
+    return event->velocity;
+}
 
+uint32_t NoteOff_GetKey(NoteOff* event)
+{
+    return event->key;
+}
 
-
+uint32_t NoteOnOff_GetKey(NoteOnOff* event)
+{
+    return event->key;
+}
+uint32_t NoteOnOff_GetVelocity(NoteOnOff* event)
+{
+    return event->velocity;
+}
+uint32_t NoteOnOff_GetDuration(NoteOnOff* event)
+{
+    return event->duration;
+}

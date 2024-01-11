@@ -16,7 +16,6 @@ target_compile_definitions(${LibName} PRIVATE MAKE_DLL)
 
 target_include_directories(${LibName} PUBLIC 
     "${PROJECT_SOURCE_DIR}/Public/" 
-    "${ModulesDirectory}/BaseMIDIHelpers/Public"
 )
 
 add_subdirectory(Tests)

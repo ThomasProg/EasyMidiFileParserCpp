@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <type_traits>
 // #include "json/single_include/nlohmann/json.hpp"
 #include "PMIDIEvent.h"
 
@@ -48,6 +49,25 @@ public:
     uint32_t GetDurationInTicks() const;
     double GetDurationInMicroseconds() const;
     uint32_t GetNbChannels() const;
+    std::vector<uint32_t> GetProgramsList() const;
+
+    template<typename T>
+    requires std::is_base_of<PMIDIEvent, T>::value
+    std::vector<std::shared_ptr<T>> GetProgramChangeList() const
+    {
+        std::vector<std::shared_ptr<T>> events;
+        for (auto& track : tracks)
+        {
+            for (auto& e : track.midiEvents)
+            {
+                if (std::shared_ptr<T> event = dynamic_pointer_cast<T>(e))
+                {
+                    events.push_back(event);
+                }
+            }
+        }
+        return events;
+    }
 
     template<typename CALLBACK>
     void ForEachTrack(CALLBACK&& callback)
@@ -68,3 +88,9 @@ public:
         }
     }
 };
+
+extern "C"
+{
+    MIDIPARSEREXPORT MIDIMusic* MIDIMusic_Create();
+    MIDIPARSEREXPORT void MIDIMusic_Destroy(MIDIMusic* music);
+}

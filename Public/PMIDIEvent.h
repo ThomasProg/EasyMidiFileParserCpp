@@ -226,3 +226,19 @@ struct MIDIPARSEREXPORT UnsupportedEvent : PMIDIEvent
     virtual void Execute(IMIDIEventReceiver* receiver) override;
 };
 
+extern "C"
+{
+    MIDIPARSEREXPORT uint32_t MIDIEvent_GetDeltaTime(PMIDIEvent* event);
+    MIDIPARSEREXPORT uint32_t MIDIChannelEvent_GetChannel(PMIDIChannelEvent* event);
+
+    MIDIPARSEREXPORT uint32_t NoteOn_GetKey(NoteOn* event);
+    MIDIPARSEREXPORT uint32_t NoteOn_GetVelocity(NoteOn* event);
+
+    MIDIPARSEREXPORT uint32_t NoteOff_GetKey(NoteOff* event);
+
+    MIDIPARSEREXPORT uint32_t NoteOnOff_GetKey(NoteOnOff* event);
+    MIDIPARSEREXPORT uint32_t NoteOnOff_GetVelocity(NoteOnOff* event);
+    MIDIPARSEREXPORT uint32_t NoteOnOff_GetDuration(NoteOnOff* event);
+
+}
+
