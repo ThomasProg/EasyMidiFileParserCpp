@@ -49,3 +49,7 @@ public:
     }
 };
 
+extern "C"
+{
+    MIDIPARSEREXPORT void MIDIMusic_FilterInstruments(class MIDIMusic* music, uint8_t start, uint8_t end, bool filterOut);
+}

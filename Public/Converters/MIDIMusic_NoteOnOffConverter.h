@@ -9,12 +9,14 @@
 class MIDIPARSEREXPORT MIDIMusic_NoteOnOffConverter
 {
 public:
-    // using Super = IMIDIEventReceiver;
+    bool operator()(std::shared_ptr<PMIDIEvent>& event);
 
     std::pmr::vector<std::shared_ptr<NoteOnOff>> openNotes;
 
     void Convert(class MIDIMusic& music);
-
-    bool operator()(std::shared_ptr<PMIDIEvent>& event);
 };
 
+extern "C"
+{
+    MIDIPARSEREXPORT void MIDIMusic_ConvertToNoteOnOff(class MIDIMusic* music);
+}

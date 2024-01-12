@@ -58,3 +58,8 @@ bool MIDIMusic_NoteOnOffConverter::operator()(std::shared_ptr<PMIDIEvent>& event
     }
     return false;
 }
+
+void MIDIMusic_ConvertToNoteOnOff(class MIDIMusic* music)
+{
+    MIDIMusic_NoteOnOffConverter().Convert(*music);
+}

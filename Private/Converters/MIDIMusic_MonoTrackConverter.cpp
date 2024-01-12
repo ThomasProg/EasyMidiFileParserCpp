@@ -1,5 +1,13 @@
 #include "Converters/MIDIMusic_MonoTrackConverter.h"
 
+#include <vector>
+#include <memory>
+#include <map>
+#include "PMIDIEvent.h"
+#include "MIDIMusic.h"
+#include "Converters/MIDIMusic_AbsoluteConverter.h"
+#include "Converters/MIDIMusic_RelativeConverter.h"
+
 void MIDIMusic_MonoTrackConverter::Convert(class MIDIMusic& newMusic)
 {
     if (newMusic.tracks.size() == 1)
@@ -35,4 +43,9 @@ void MIDIMusic_MonoTrackConverter::ConvertUnsafe(class MIDIMusic& newMusic)
         trackData.midiEvents.push_back(event);
     }
     // newMusic.tracks.shrink_to_fit(); // space opti, probably not gonna create more tracks in the future
+}
+
+void MIDIMusic_ConvertToMonoTrack(class MIDIMusic* music)
+{
+    MIDIMusic_MonoTrackConverter().Convert(*music);
 }

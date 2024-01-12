@@ -27,3 +27,8 @@ void MIDIMusic_InstrumentFilter::Convert(class MIDIMusic& music)
         return false;
     });
 }
+
+void MIDIMusic_FilterInstruments(class MIDIMusic* music, uint8_t start, uint8_t end, bool filterOut)
+{
+    MIDIMusic_InstrumentFilter(start, end, filterOut).Convert(*music);
+}

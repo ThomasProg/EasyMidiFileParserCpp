@@ -19,3 +19,7 @@ public:
     void Convert(class MIDIMusic& music);
 };
 
+extern "C"
+{
+    MIDIPARSEREXPORT void MIDIMusic_FilterChannel(class MIDIMusic* music, uint32_t filteredChannel, bool filterOut);
+}

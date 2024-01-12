@@ -1,12 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <map>
-#include "PMIDIEvent.h"
-#include "MIDIMusic.h"
-#include "MIDIMusic_AbsoluteConverter.h"
-#include "MIDIMusic_RelativeConverter.h"
+#include "Macros.h"
 
 // Combines every track into only 1 track
 class MIDIPARSEREXPORT MIDIMusic_MonoTrackConverter
@@ -18,3 +12,7 @@ public:
     void ConvertUnsafe(class MIDIMusic& newMusic);
 };
 
+extern "C"
+{
+    MIDIPARSEREXPORT void MIDIMusic_ConvertToMonoTrack(class MIDIMusic* music);
+}
