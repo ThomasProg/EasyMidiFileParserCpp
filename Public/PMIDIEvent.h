@@ -3,6 +3,8 @@
 #include <cstdint>
 #include "MIDIHelpers.h"
 
+#define CLONE_OVERRIDE(className) virtual PMIDIEvent* Clone() override;
+
 class IMIDIEventReceiver;
 
 // Polymorphic struct for midi representation
@@ -12,6 +14,7 @@ struct MIDIPARSEREXPORT PMIDIEvent
 
     //virtual void Play() = 0;
     virtual void Execute(IMIDIEventReceiver* receiver) {}
+    virtual PMIDIEvent* Clone() = 0;
     virtual ~PMIDIEvent() noexcept {}
 };
 
@@ -28,6 +31,7 @@ struct MIDIPARSEREXPORT PMIDIMetaEvent : PMIDIEvent
 struct MIDIPARSEREXPORT PMIDISysEvent : PMIDIEvent
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT NoteOn : PMIDIChannelEvent
@@ -36,6 +40,7 @@ struct MIDIPARSEREXPORT NoteOn : PMIDIChannelEvent
     uint32_t velocity = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT NoteOff : PMIDIChannelEvent
@@ -43,6 +48,7 @@ struct MIDIPARSEREXPORT NoteOff : PMIDIChannelEvent
     uint32_t key = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 // A mix of NoteOn and NoteOff ; ensures there is always a noteoff for a noteon note
@@ -53,6 +59,7 @@ struct MIDIPARSEREXPORT NoteOnOff : PMIDIChannelEvent
     uint32_t duration = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 // A note used in a music partition
@@ -117,6 +124,7 @@ struct MIDIPARSEREXPORT ControlChange : PMIDIChannelEvent
     uint32_t value = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT PitchBend : PMIDIChannelEvent
@@ -124,18 +132,21 @@ struct MIDIPARSEREXPORT PitchBend : PMIDIChannelEvent
     uint32_t value = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 // @TODO
 struct MIDIPARSEREXPORT NoteAfterTouch : PMIDIChannelEvent
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 // @TODO
 struct MIDIPARSEREXPORT ChannelAfterTouch : PMIDIChannelEvent
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 
@@ -144,6 +155,7 @@ struct MIDIPARSEREXPORT ProgramChange : PMIDIChannelEvent
     uint32_t newProgram = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT KeySignature : PMIDIMetaEvent
@@ -152,24 +164,28 @@ struct MIDIPARSEREXPORT KeySignature : PMIDIMetaEvent
     uint8_t mi = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 // @TODO
 struct MIDIPARSEREXPORT TimeSignature : PMIDIMetaEvent
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 // @TODO
 struct MIDIPARSEREXPORT MIDIPort : PMIDIMetaEvent
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 // @TODO
 struct MIDIPARSEREXPORT EndOfTrack : PMIDIMetaEvent
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT Tempo : PMIDIMetaEvent
@@ -177,6 +193,7 @@ struct MIDIPARSEREXPORT Tempo : PMIDIMetaEvent
     uint32_t newTempo = 0;
 
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 
@@ -189,41 +206,49 @@ struct MIDIPARSEREXPORT PMIDIMetaEvent_WithText : PMIDIMetaEvent
 struct MIDIPARSEREXPORT Text : PMIDIMetaEvent_WithText 
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT Copyright : PMIDIMetaEvent_WithText 
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT TrackName : PMIDIMetaEvent_WithText 
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT InstrumentName : PMIDIMetaEvent_WithText 
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT Lyrics : PMIDIMetaEvent_WithText 
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT Marker : PMIDIMetaEvent_WithText 
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT CuePoint : PMIDIMetaEvent_WithText 
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 struct MIDIPARSEREXPORT UnsupportedEvent : PMIDIEvent
 {
     virtual void Execute(IMIDIEventReceiver* receiver) override;
+    virtual PMIDIEvent* Clone() override;
 };
 
 extern "C"

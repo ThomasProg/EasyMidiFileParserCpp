@@ -104,3 +104,18 @@ MIDIPARSEREXPORT void MIDIMusic_Destroy(MIDIMusic* music)
 {
     delete music;
 }
+
+MIDIPARSEREXPORT MIDIMusic* MIDIMusic_Clone(MIDIMusic* music)
+{
+    MIDIMusic* newMusic = new MIDIMusic(*music);
+
+    for (auto& track : newMusic->tracks)
+    {
+        for (std::shared_ptr<PMIDIEvent>& e : track.midiEvents)
+        {
+            e = std::shared_ptr<PMIDIEvent>(e->Clone());
+        }
+    }
+
+    return newMusic;
+}
