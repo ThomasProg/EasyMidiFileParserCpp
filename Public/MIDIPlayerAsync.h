@@ -1,38 +1,33 @@
 #pragma once
 
-#include <chrono>
 #include <atomic>
-#include "AMIDIPlayer.h"
+#include "Macros.h"
 
 // Async utilities
 // Prevents std library from being included in AMIDIPlayer
-// <atomic>, <mutex>, <chrono>
+// <atomic>, <mutex>, <chrono>Q
 class MIDIPARSEREXPORT MIDIPlayerAsync
 {
-public:
-    AMIDIPlayer* player = nullptr;
+private:
     std::atomic<bool> isPlaying;
 
 public:
-    virtual void Play()
-    {
-        player->OnPrePlay();
-        isPlaying = true;
+    class AMIDIPlayer* player = nullptr;
 
-        std::chrono::time_point programBeginTime = std::chrono::high_resolution_clock::now();
-        while (isPlaying.load())
-        {
-            auto frameStartTime = std::chrono::high_resolution_clock::now();
-
-            double time = std::chrono::duration<double, std::micro>(frameStartTime - programBeginTime).count();
-
-            player->ExecuteEventsUntil(time);
-        }
-    }
-
-    virtual void Stop()
-    {
-        isPlaying = false;
-    }
+public:
+    virtual void Play();
+    virtual void Stop();
+    bool IsPlaying() const;
+    void PlayAsync();
 };
 
+extern "C"
+{
+    MIDIPARSEREXPORT MIDIPlayerAsync* MIDIPlayerAsync_Create();
+    MIDIPARSEREXPORT void MIDIPlayerAsync_Destroy(MIDIPlayerAsync* player);
+
+    MIDIPARSEREXPORT void MIDIPlayerAsync_SetPlayer(AMIDIPlayer* playerAsync, class AMIDIPlayer* internalPlayer);
+    MIDIPARSEREXPORT void MIDIPlayerAsync_Play(AMIDIPlayer* player);
+    MIDIPARSEREXPORT void MIDIPlayerAsync_Stop(AMIDIPlayer* player);
+    MIDIPARSEREXPORT bool MIDIPlayerAsync_IsPlaying(AMIDIPlayer* player);
+}

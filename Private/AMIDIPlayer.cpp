@@ -30,3 +30,12 @@ void AMIDIPlayer::ExecuteEventsUntil(double currentTime /* in microseconds */)
         }
     }
 }
+
+void AMIDIPlayer_SetMusic(AMIDIPlayer* player, class MIDIMusic* music)
+{
+    player->music = music;
+}
+void AMIDIPlayer_PlayStep(AMIDIPlayer* player, double addedTime /* in microseconds */)
+{
+    player->PlayStep(addedTime);
+}

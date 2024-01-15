@@ -5,12 +5,13 @@
 
 class MIDIPARSEREXPORT AMIDIPlayer : public IMIDIEventReceiver
 {
+private:
     std::vector<uint32_t> trackIndices;
     std::vector<double> trackLastEventTime;
 
     // only 3 bytes
     // microsecondsPerQuarterNote;
-    uint32_t tempo = 0.5*1000.0*1000.0; // 120 bpm by default (0.5s delay, so 5 * 1000 * 1000 microseconds)
+    uint32_t tempo = 500000; // 120 bpm by default (0.5s delay, so 0.5 * 1000 * 1000 microseconds)
     double time = 0.0;
 
 public:
@@ -45,3 +46,6 @@ public:
 
     virtual ~AMIDIPlayer() = default;
 };
+
+MIDIPARSEREXPORT void AMIDIPlayer_SetMusic(AMIDIPlayer* player, class MIDIMusic* music);
+MIDIPARSEREXPORT void AMIDIPlayer_PlayStep(AMIDIPlayer* player, double addedTime /* in microseconds */);
