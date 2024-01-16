@@ -2,7 +2,7 @@
 #define _MIDI_EXPORT_H_
 
 #include "Macros.h"
-#include <cstdint>
+#include <cstddef>
 
 struct BufferWriter;
 

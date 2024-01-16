@@ -3,12 +3,7 @@
 
 #include <cstdint>
 #include <stdexcept>
-
-#ifdef MAKE_DLL // CPP
-#define MIDIPARSEREXPORT __declspec(dllexport)
-#else
-#define MIDIPARSEREXPORT __declspec(dllimport)
-#endif
+#include "Macros.h"
 
 struct MIDIPARSEREXPORT Buffer
 {

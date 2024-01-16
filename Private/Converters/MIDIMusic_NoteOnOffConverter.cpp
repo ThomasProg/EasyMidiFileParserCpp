@@ -1,6 +1,7 @@
 #include "Converters/MIDIMusic_NoteOnOffConverter.h"
 #include "MIDIMusic.h"
 #include <stdexcept>
+#include <algorithm>
 
 void MIDIMusic_NoteOnOffConverter::Convert(MIDIMusic& music)
 {
