@@ -7,6 +7,7 @@
 #include <bit>
 #include <string>
 #include <iostream>
+#include <cstring> // memcpy
 #include "MIDIParserException.h"
 #include "EndianHelpers.h"
 #include "Buffers/BufferReader.h"

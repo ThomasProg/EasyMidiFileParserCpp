@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <stdexcept>
 #include <concepts>
+#include <cstring> // memcpy
 #include "EndianHelpers.h"
 #include "Macros.h"
 

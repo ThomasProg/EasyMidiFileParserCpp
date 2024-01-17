@@ -8,7 +8,7 @@ template<typename T>
 requires std::integral<T>
 constexpr bool IsBigEndianRuntime()
 {
-    inline const union Temp{
+    const union Temp{
         T i;
         char c[1];
     } temp = {0x01020304};

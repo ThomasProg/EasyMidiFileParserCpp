@@ -32,7 +32,7 @@ public:
 
         stream << "track-meta\n";
         stream << "   time: " << deltaTime << '\n';
-        stream << "   type: " << (int) metaEvent.type << "[" << MIDIParser::MidiMetaToStr(metaEvent.type) << "]\n";
+        stream << "   type: " << (int) metaEvent.type << "[" << MIDIParserBase::MidiMetaToStr(metaEvent.type) << "]\n";
         stream << "   length: " << (int) metaEvent.length << std::endl; 
     }
 
@@ -42,7 +42,7 @@ public:
 
         stream << "track-midi" << '\n';
         stream << "  time: " << deltaTime << '\n';
-        stream << "  status: " << (int) channelEvent.message << "[" << MIDIParser::ENoteEventToStr(channelEvent.message) << "]" << '\n';
+        stream << "  status: " << (int) channelEvent.message << "[" << MIDIParserBase::ENoteEventToStr(channelEvent.message) << "]" << '\n';
         stream << "  channel: " << (int) channelEvent.channel << '\n';
         stream << "  param1: " << (int) channelEvent.param1 << '\n';
         stream << "  param2: " << (int) channelEvent.param2 << std::endl;
