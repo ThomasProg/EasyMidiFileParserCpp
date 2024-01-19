@@ -257,3 +257,43 @@ uint32_t NoteOnOff_GetDuration(NoteOnOff* event)
 {
     return event->duration;
 }
+
+void NoteOnOff_SetKey(NoteOnOff* event, uint32_t key)
+{
+    event->key = key;
+}
+void NoteOnOff_SetVelocity(NoteOnOff* event, uint32_t velocity)
+{
+    event->velocity = velocity;
+}
+void NoteOnOff_SetDuration(NoteOnOff* event, uint32_t duration)
+{
+    event->duration = duration;
+}
+
+NoteOn* NoteOn_Create()
+{
+    return new NoteOn();
+}
+NoteOff* NoteOff_Create()
+{
+    return new NoteOff();
+}
+NoteOnOff* NoteOnOff_Create()
+{
+    return new NoteOnOff();
+}
+void PMIDIEvent_Destroy(PMIDIEvent* event)
+{
+    delete event;
+}
+
+void MIDIEvent_SetDeltaTime(PMIDIEvent* event, uint32_t deltaTime)
+{
+    event->deltaTime = deltaTime;
+}
+
+void MIDIChannelEvent_SetChannel(PMIDIChannelEvent* event, uint32_t channel)
+{
+    event->channel = channel;
+}

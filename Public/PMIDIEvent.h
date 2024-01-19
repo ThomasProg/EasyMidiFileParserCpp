@@ -255,6 +255,8 @@ extern "C"
 {
     MIDIPARSEREXPORT uint32_t MIDIEvent_GetDeltaTime(PMIDIEvent* event);
     MIDIPARSEREXPORT uint32_t MIDIChannelEvent_GetChannel(PMIDIChannelEvent* event);
+    MIDIPARSEREXPORT void MIDIEvent_SetDeltaTime(PMIDIEvent* event, uint32_t deltaTime);
+    MIDIPARSEREXPORT void MIDIChannelEvent_SetChannel(PMIDIChannelEvent* event, uint32_t channel);
 
     MIDIPARSEREXPORT uint32_t NoteOn_GetKey(NoteOn* event);
     MIDIPARSEREXPORT uint32_t NoteOn_GetVelocity(NoteOn* event);
@@ -264,6 +266,13 @@ extern "C"
     MIDIPARSEREXPORT uint32_t NoteOnOff_GetKey(NoteOnOff* event);
     MIDIPARSEREXPORT uint32_t NoteOnOff_GetVelocity(NoteOnOff* event);
     MIDIPARSEREXPORT uint32_t NoteOnOff_GetDuration(NoteOnOff* event);
+    MIDIPARSEREXPORT void NoteOnOff_SetKey(NoteOnOff* event, uint32_t key);
+    MIDIPARSEREXPORT void NoteOnOff_SetVelocity(NoteOnOff* event, uint32_t velocity);
+    MIDIPARSEREXPORT void NoteOnOff_SetDuration(NoteOnOff* event, uint32_t duration);
 
+    MIDIPARSEREXPORT NoteOn* NoteOn_Create();
+    MIDIPARSEREXPORT NoteOff* NoteOff_Create();
+    MIDIPARSEREXPORT NoteOnOff* NoteOnOff_Create();
+    MIDIPARSEREXPORT void PMIDIEvent_Destroy(PMIDIEvent* destroy);
 }
 

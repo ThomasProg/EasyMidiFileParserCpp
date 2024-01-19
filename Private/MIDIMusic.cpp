@@ -119,3 +119,11 @@ MIDIPARSEREXPORT MIDIMusic* MIDIMusic_Clone(MIDIMusic* music)
 
     return newMusic;
 }
+
+MIDIPARSEREXPORT void MIDIMusic_AddEvent(MIDIMusic* music, class PMIDIEvent* event)
+{
+    if (music->tracks.size() == 0)
+        music->tracks.resize(1);
+
+    music->tracks[0].midiEvents.push_back(std::shared_ptr<PMIDIEvent>(event));
+}

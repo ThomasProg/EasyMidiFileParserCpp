@@ -94,4 +94,6 @@ extern "C"
     MIDIPARSEREXPORT MIDIMusic* MIDIMusic_Create();
     MIDIPARSEREXPORT void MIDIMusic_Destroy(MIDIMusic* music);
     MIDIPARSEREXPORT MIDIMusic* MIDIMusic_Clone(MIDIMusic*);
+
+    MIDIPARSEREXPORT void MIDIMusic_AddEvent(MIDIMusic* music, class PMIDIEvent* event);
 }
