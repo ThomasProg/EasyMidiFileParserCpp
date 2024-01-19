@@ -6,16 +6,19 @@ set(CMAKE_BUILD_TYPE debug)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
 
 FILE(GLOB SOURCES Private/* Public/* Private/*/* Public/*/*)
-set(LibName "EasyMidiFileParserCpp")
-project(${LibName})
+project(EasyMidiFileParserCpp)
 
 # Create library
-add_library(${LibName} SHARED ${SOURCES})
+add_library(EasyMidiFileParserCpp SHARED ${SOURCES})
 
-target_compile_definitions(${LibName} PRIVATE MAKE_DLL)
+target_compile_definitions(EasyMidiFileParserCpp PRIVATE MAKE_DLL)
 
-target_include_directories(${LibName} PUBLIC 
+target_include_directories(EasyMidiFileParserCpp PUBLIC 
     "${PROJECT_SOURCE_DIR}/Public/" 
 )
+
+install(TARGETS EasyMidiFileParserCpp
+        LIBRARY DESTINATION bin
+        RUNTIME DESTINATION bin)
 
 add_subdirectory(Tests)
