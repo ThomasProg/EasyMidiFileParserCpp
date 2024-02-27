@@ -61,12 +61,6 @@ void Tokenizer_BuildTokensFromNotesHelper(Tokenizer* tokenizer, float (*GetToken
     {
         tokenizer->tokens.push_back(GetTokenFromNotes(v.size(), v.data()));
     }
-
-    for (float& f : tokenizer->tokens)
-    {
-        if (f > 0.5)
-            std::cout << 1.f << std::endl;
-    }
 }
 
 float GetTokenFromNotes1(uint32_t nbNotes, uint32_t* notes)
