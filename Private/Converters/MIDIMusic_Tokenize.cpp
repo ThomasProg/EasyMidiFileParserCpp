@@ -67,7 +67,8 @@ float GetTokenFromNotes1(uint32_t nbNotes, uint32_t* notes)
 {
     if (nbNotes > 0)
     {
-        return 1.f;
+        // return 1.f;
+        return float(notes[0]) / 127.f;
     }
     else
     {

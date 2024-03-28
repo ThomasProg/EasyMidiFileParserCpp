@@ -127,3 +127,23 @@ MIDIPARSEREXPORT void MIDIMusic_AddEvent(MIDIMusic* music, class PMIDIEvent* eve
 
     music->tracks[0].midiEvents.push_back(std::shared_ptr<PMIDIEvent>(event));
 }
+
+// MIDIPARSEREXPORT int32_t MIDIMusic_GetTempo(MIDIMusic* music)
+// {
+//     return music->
+// }
+
+MIDIPARSEREXPORT int32_t MIDIMusic_GetTicksPerQuarterNote(MIDIMusic* music)
+{
+    return music->ticksPerQuarterNote;
+}
+
+MIDIPARSEREXPORT void MIDIMusic_SetTicksPerQuarterNote(MIDIMusic* music, int32_t ticksPerQuarterNote)
+{
+    music->ticksPerQuarterNote = ticksPerQuarterNote;
+}
+
+// MIDIPARSEREXPORT int32_t MIDIMusic_GetBPM(MIDIMusic* music)
+// {
+//     return music->ticksPerQuarterNote;
+// }

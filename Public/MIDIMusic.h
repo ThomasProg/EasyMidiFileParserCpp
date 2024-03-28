@@ -96,4 +96,9 @@ extern "C"
     MIDIPARSEREXPORT MIDIMusic* MIDIMusic_Clone(MIDIMusic*);
 
     MIDIPARSEREXPORT void MIDIMusic_AddEvent(MIDIMusic* music, class PMIDIEvent* event);
+
+    // MIDIPARSEREXPORT int32_t MIDIMusic_GetTempo(MIDIMusic* music);
+    MIDIPARSEREXPORT int32_t MIDIMusic_GetTicksPerQuarterNote(MIDIMusic* music);
+    MIDIPARSEREXPORT void MIDIMusic_SetTicksPerQuarterNote(MIDIMusic* music, int32_t ticksPerQuarterNote);
+    // MIDIPARSEREXPORT int32_t MIDIMusic_GetBPM(MIDIMusic* music);
 }
