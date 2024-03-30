@@ -68,7 +68,17 @@ float GetTokenFromNotes1(uint32_t nbNotes, uint32_t* notes)
     if (nbNotes > 0)
     {
         // return 1.f;
-        return float(notes[0]) / 127.f;
+        // return float(notes[0]) / 127.f;
+
+        int max = notes[0]; // Initialize max with the first element
+
+        for (int i = 1; i < nbNotes; i++) {
+            if (notes[i] > max) {
+                max = notes[i]; // Update max if a larger value is found
+            }
+        }
+
+        return float(max);//notes[0];
     }
     else
     {
