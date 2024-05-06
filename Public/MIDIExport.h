@@ -3,6 +3,7 @@
 
 #include "Macros.h"
 #include <cstdint>
+#include <cstddef>
 
 struct BufferWriter;
 

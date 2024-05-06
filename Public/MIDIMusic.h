@@ -51,6 +51,8 @@ public:
     uint32_t GetNbChannels() const;
     std::vector<uint32_t> GetProgramsList() const;
 
+#if __cplusplus >= 202002L
+    // C++20 (and later) code
     template<typename T>
     requires std::is_base_of<PMIDIEvent, T>::value
     std::vector<std::shared_ptr<T>> GetProgramChangeList() const
@@ -68,6 +70,24 @@ public:
         }
         return events;
     }
+#else
+    template<typename T>
+    std::vector<std::shared_ptr<T>> GetProgramChangeList() const
+    {
+        std::vector<std::shared_ptr<T>> events;
+        for (auto& track : tracks)
+        {
+            for (auto& e : track.midiEvents)
+            {
+                if (std::shared_ptr<T> event = dynamic_pointer_cast<T>(e))
+                {
+                    events.push_back(event);
+                }
+            }
+        }
+        return events;
+    }
+#endif
 
     template<typename CALLBACK>
     void ForEachTrack(CALLBACK&& callback)
@@ -95,7 +115,7 @@ extern "C"
     MIDIPARSEREXPORT void MIDIMusic_Destroy(MIDIMusic* music);
     MIDIPARSEREXPORT MIDIMusic* MIDIMusic_Clone(MIDIMusic*);
 
-    MIDIPARSEREXPORT void MIDIMusic_AddEvent(MIDIMusic* music, class PMIDIEvent* event);
+    MIDIPARSEREXPORT void MIDIMusic_AddEvent(MIDIMusic* music, struct PMIDIEvent* event);
 
     // MIDIPARSEREXPORT int32_t MIDIMusic_GetTempo(MIDIMusic* music);
     MIDIPARSEREXPORT int32_t MIDIMusic_GetTicksPerQuarterNote(MIDIMusic* music);
