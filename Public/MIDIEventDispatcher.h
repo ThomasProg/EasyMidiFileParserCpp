@@ -20,6 +20,8 @@ struct MIDIPARSEREXPORT MIDIEventCallbacks
     void (*OnPitchBend)(void* userData, const PitchBend* pitchBend) = nullptr;
     void (*OnNoteAfterTouch)(void* userData, const NoteAfterTouch* noteAfterTouch) = nullptr;
     void (*OnChannelAfterTouch)(void* userData, const ChannelAfterTouch* channelAfterTouch) = nullptr;
+
+    void (*OnTimeSignature)(void* userData, const TimeSignature* timeSignature) = nullptr;
 };
 
 class MIDIEventDispatcher : public IMIDIEventReceiver
@@ -125,7 +127,13 @@ public:
     // // sf : 0 = key of C, -1 = 1 flat, 1 = 1 sharp
     // // mi : major or minor ?
     // virtual void OnKeySignature(const KeySignature& keySignature) { OnMetaEvent(keySignature); }
-    // virtual void OnTimeSignature(const TimeSignature& timeSignature) { OnMetaEvent(timeSignature); }
+    virtual void OnTimeSignature(const TimeSignature& timeSignature) 
+    { 
+        IMIDIEventReceiver::OnTimeSignature(timeSignature);
+        if (callbacks.OnTimeSignature)
+            callbacks.OnTimeSignature(userData, &timeSignature); 
+        OnMetaEvent(timeSignature); 
+    }
     // virtual void OnMIDIPort(const MIDIPort& midiPort) { OnMetaEvent(midiPort); }
     // virtual void OnEndOfTrack(const EndOfTrack& endOfTrack) { OnMetaEvent(endOfTrack); }
     // virtual void OnTempo(const Tempo& tempo) { OnMetaEvent(tempo); }

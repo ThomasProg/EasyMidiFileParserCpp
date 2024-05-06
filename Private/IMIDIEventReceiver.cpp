@@ -37,10 +37,10 @@ void IMIDIEventReceiver::OnMetaEventLoaded(uint32_t deltaTime, MetaEvent& metaEv
         assert(metaEvent.length == 4);
         TimeSignature timeSignature;
         timeSignature.deltaTime = deltaTime;
-        int nominator = metaEvent.bytes[0];
-        int denominator = 2 << metaEvent.bytes[1];
-        int clocks = metaEvent.bytes[2];
-        int notes = metaEvent.bytes[3];
+        timeSignature.nominator = metaEvent.bytes[0];
+        timeSignature.denominator = 2 << metaEvent.bytes[1];
+        timeSignature.clocks = metaEvent.bytes[2];
+        timeSignature.notes = metaEvent.bytes[3];
         OnTimeSignature(timeSignature);
         break;
     }

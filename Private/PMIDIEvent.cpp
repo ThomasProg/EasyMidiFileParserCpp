@@ -297,3 +297,20 @@ void MIDIChannelEvent_SetChannel(PMIDIChannelEvent* event, uint32_t channel)
 {
     event->channel = channel;
 }
+
+uint32_t TimeSignature_GetNominator(TimeSignature* event)
+{
+    return event->nominator;
+}
+uint32_t TimeSignature_GetDenominator(TimeSignature* event)
+{
+    return event->denominator;
+}
+uint32_t TimeSignature_GetClocks(TimeSignature* event)
+{
+    return event->clocks;
+}
+uint32_t TimeSignature_GetNotes(TimeSignature* event)
+{
+    return event->notes;
+}

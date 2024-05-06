@@ -170,6 +170,11 @@ struct MIDIPARSEREXPORT KeySignature : PMIDIMetaEvent
 // @TODO
 struct MIDIPARSEREXPORT TimeSignature : PMIDIMetaEvent
 {
+    uint32_t nominator;
+    uint32_t denominator;
+    uint32_t clocks;
+    uint32_t notes;
+
     virtual void Execute(IMIDIEventReceiver* receiver) override;
     virtual PMIDIEvent* Clone() override;
 };
@@ -274,5 +279,10 @@ extern "C"
     MIDIPARSEREXPORT NoteOff* NoteOff_Create();
     MIDIPARSEREXPORT NoteOnOff* NoteOnOff_Create();
     MIDIPARSEREXPORT void PMIDIEvent_Destroy(PMIDIEvent* destroy);
+
+    MIDIPARSEREXPORT uint32_t TimeSignature_GetNominator(TimeSignature* event);
+    MIDIPARSEREXPORT uint32_t TimeSignature_GetDenominator(TimeSignature* event);
+    MIDIPARSEREXPORT uint32_t TimeSignature_GetClocks(TimeSignature* event);
+    MIDIPARSEREXPORT uint32_t TimeSignature_GetNotes(TimeSignature* event);
 }
 

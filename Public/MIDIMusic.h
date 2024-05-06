@@ -42,8 +42,8 @@ public:
 
     int16_t ticksPerQuarterNote = 4; // is 4 the default ?
 
-    int8_t sf = 0;
-    uint8_t mi = 0;
+    int8_t sf = 0; // 0 = key of C, -1 = 1 flat, 1 = 1 sharp
+    uint8_t mi = 0; // major or minor ?
     bool isTonalitySet = false;
 
     uint32_t GetDurationInTicks() const;

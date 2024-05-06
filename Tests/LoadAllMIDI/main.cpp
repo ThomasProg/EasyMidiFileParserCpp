@@ -4,6 +4,7 @@
 #include <thread>
 #include <future>
 #include <atomic>
+#include <algorithm>
 #include "MIDIParserException.h"
 #include "LoggingMIDIParser.h"
 #include "ConfigParser.h"

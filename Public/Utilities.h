@@ -4,5 +4,5 @@
 
 extern "C"
 {
-    MIDIPARSEREXPORT void MIDIMusic_LoadFromFile(class MIDIMusic* music, const char* filename);
+    MIDIPARSEREXPORT bool MIDIMusic_LoadFromFile(class MIDIMusic* music, const char* filename);
 }
