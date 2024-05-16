@@ -2,6 +2,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
+#include <bit>
 
 void IMIDIEventReceiver::OnSysEventLoaded(uint32_t deltaTime, SysexEvent& sysEvent)
 {

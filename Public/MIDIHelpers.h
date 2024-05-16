@@ -4,7 +4,7 @@
 #include <cstdint>
 #include "Macros.h"
 
-enum class MIDIPARSEREXPORT ENoteEvent : uint8_t
+enum class ENoteEvent : uint8_t
 {
     // Regular Events
     NOTE_OFF = 0x80,
@@ -16,7 +16,7 @@ enum class MIDIPARSEREXPORT ENoteEvent : uint8_t
     PITCH_BEND = 0xE0,
 };
 
-enum class MIDIPARSEREXPORT EMidiMeta : uint8_t
+enum class EMidiMeta : uint8_t
 {
     SEQ_NUM = 0x00,
     TEXT = 0x01,
@@ -36,7 +36,7 @@ enum class MIDIPARSEREXPORT EMidiMeta : uint8_t
     SEQ_SPECIFIC = 0x7F,
 };
 
-enum class MIDIPARSEREXPORT EControlChange : uint8_t
+enum class EControlChange : uint8_t
 {
     BANK_SELECT = 0,
     MODULATION_WHEEL = 1,
@@ -105,7 +105,7 @@ enum class MIDIPARSEREXPORT EControlChange : uint8_t
 };
 
 // https://users.cs.cf.ac.uk/dave/Multimedia/node158.html
-enum class MIDIPARSEREXPORT ESysEvent : uint8_t
+enum class ESysEvent : uint8_t
 {
     // System exclusive messages (i.e. non standard)
     SYSTEM_EXCLUSIVE = 0xF0,
